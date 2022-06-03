@@ -7,14 +7,14 @@ const User = require('../models/userModel')
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body
+  const { nombre, apellido, telefono, email, password } = req.body
 
-  if (!name || !email || !password) {
+  if (!nombre || !apellido || !telefono || !email || !password) {
     res.status(400)
     throw new Error('Completar todos los campos')
   }
 
-  // Check if user exists
+  // Chequeo si el usuario existe
   const userExists = await User.findOne({ email })
 
   if (userExists) {
@@ -26,9 +26,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10)
   const hashedPassword = await bcrypt.hash(password, salt)
 
-  // Create user
+  // Creacion de user
   const user = await User.create({
-    name,
+    nombre,
+    apellido,
+    telefono,
     email,
     password: hashedPassword,
   })
@@ -36,7 +38,9 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     res.status(201).json({
       _id: user.id,
-      name: user.name,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      telefono: user.telefono,
       email: user.email,
       token: generateToken(user._id),
     })
@@ -52,13 +56,15 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
 
-  // Check for user email
+  // Chequeo mediante email de usr
   const user = await User.findOne({ email })
 
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user.id,
-      name: user.name,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      telefono: user.telefono,
       email: user.email,
       token: generateToken(user._id),
     })
@@ -68,6 +74,8 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 })
 
+
+
 // @desc    Get user data
 // @route   GET /api/users/me
 // @access  Private
@@ -75,15 +83,38 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user)
 })
 
-// Generate JWT
+// Genera JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   })
 }
 
+//-----------
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id) //id del usr
+
+
+// Check for user
+if (!req.user) {
+  res.status(401)
+  throw new Error('User not found')
+}
+
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true, //si no existe lo crea
+  })
+
+  res.status(200).json(updatedUser)
+})
+
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  updateUser,
 }
