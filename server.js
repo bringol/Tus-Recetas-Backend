@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/goals', require('./routes/goalRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/recetas', require('./routes/recetaRoutes'))
 
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {
@@ -30,4 +31,4 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(errorHandler)
 
-app.listen(port, () => console.log(`Servidor iniciado en el pueto ${port}`))
+app.listen(port, () => console.log(`Servidor iniciado en el puerto ${port}`))

@@ -5,7 +5,7 @@
 `git clone https://github.com/bringol/Tus-Recetas-TPO`
 
 
-**Para ver cambiosssss**
+**Para ver cambios**
 
 `git status`
 

@@ -10,8 +10,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
-  "author": "Grupo 27 ",
-  "license": "",
+  "author": "Grupo 27",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
@@ -19,10 +19,19 @@
     "express": "^4.17.2",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.1.9"
+    "mongoose": "^6.1.9",
+    "mongoose-paginate": "^5.0.3"
   },
   "devDependencies": {
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bringol/Tus-Recetas-Backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bringol/Tus-Recetas-Backend/issues"
+  },
+  "homepage": "https://github.com/bringol/Tus-Recetas-Backend#readme"
 }
