@@ -1,120 +1,58 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
+var userService = require('../services/userService');
+//testing
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 
-// @desc    Registrar usr nuevo
-// @route   POST /api/users
-// @access  Public
-const registerUser = asyncHandler(async (req, res) => {
-  const { nombre, apellido, telefono, email, password } = req.body
 
-  if (!nombre || !apellido || !telefono || !email || !password) {
-    res.status(400)
-    throw new Error('Completar todos los campos')
-  }
-
-  // Chequeo si el usuario existe
-  const userExists = await User.findOne({ email })
-
-  if (userExists) {
-    res.status(400)
-    throw new Error('Usuario ya existe')
-  }
-
-  // Hash password
-  const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
-
-  // Creacion de user
-  const user = await User.create({
-    nombre,
-    apellido,
-    telefono,
-    email,
-    password: hashedPassword,
-  })
-
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      telefono: user.telefono,
-      email: user.email,
-      token: generateToken(user._id),
-    })
-  } else {
-    res.status(400)
-    throw new Error('Datos de usuario inválidos')
-  }
-})
-
-// @desc    Autenticar un usr
-// @route   POST /api/users/login
-// @access  Public
-const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body
-
-  // Chequeo mediante email de usr
-  const user = await User.findOne({ email })
-
-  if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({
-      _id: user.id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      telefono: user.telefono,
-      email: user.email,
-      token: generateToken(user._id),
-    })
-  } else {
-    res.status(400)
-    throw new Error('Credenciales inválidas')
-  }
-})
-
-
-
-// @desc    Get user data
-// @route   GET /api/users/me
-// @access  Private
-const getMe = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user)
-})
-
-// Genera JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  })
+exports.createUser = async function(req, res, next) {
+    // Req.Body contains the form submit values.
+    console.log("llegue al controller", req.body)
+    
+    try {
+        // Calling the Service function with the new object from the Request Body
+        var createdUser = await userService.registerUser(req,res)
+        //return res.status(201).json({ createdUser, message: "Succesfully Created User" })
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        console.log(e)
+        return res.status(400).json({ status: 400, message: e.message })
+    }
 }
 
-//-----------
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private
-const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id) //id del usr
+exports.updateUser = async function(req, res, next) {
 
-
-// Check for user
-if (!req.user) {
-  res.status(401)
-  throw new Error('User not found')
+    console.log("llegue al controller", req.body)
+    
+     try {
+        var updatedUser = await userService.updateUser(req,res)
+        
+        return res.status(200).json( "Succesfully Updated User" )
+    } catch (e) {
+        return res.status(400).json({ status: 400., message: e.message })
+    }
 }
 
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, //si no existe lo crea
-  })
-
-  res.status(200).json(updatedUser)
-})
 
 
-module.exports = {
-  registerUser,
-  loginUser,
-  getMe,
-  updateUser,
+exports.loginUser = async function(req, res, next) {
+    // Req.Body contains the form submit values.
+    console.log("body", req.body)
+    
+    try {
+        // Calling the Service function with the new object from the Request Body
+        var loginUser = await userService.loginUser(req, res);
+        //return res.status(201).json({ loginUser, message: "Succesfully login" })
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({ status: 400, message: "Usuario o contraseña invalido" })
+    }
 }
+
+exports.getUserByToken = async (req, res) => {
+    res.status(200).json(req.user)
+  }
+
+  exports.getUserByEmail = async (req, res) => {
+    const {email}=await User.findOne({_id:req.user.email})
+    res.status(200).json(req.user)
+  }
