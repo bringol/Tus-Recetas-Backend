@@ -1,16 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const {
-  registerUser,
-  loginUser,
-  getMe,
-  updateUser,
-} = require('../controllers/userController')
+const userController = require('../controllers/userController')
 const { protect } = require('../middleware/authMiddleware')
 
-router.post('/', registerUser)
-router.post('/login', loginUser)
-router.get('/me', protect, getMe)
-router.route("/:id").put(protect,updateUser)
+router.post('/', userController.createUser)
+router.post('/login', userController.loginUser)
+//router.get('/me', protect, userController.getMe)
+router.get('/me', protect, userController.getUserByToken)
+router.post('/email', protect, userController.getUserByEmail)
+router.route("/").put(protect,userController.updateUser)//ver video clase donde sacan el id
 
 module.exports = router
