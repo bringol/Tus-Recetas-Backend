@@ -1,4 +1,6 @@
 var Receta = require('../models/recetaModel');
+const mongoose = require('mongoose');
+
 
 _this = this
 
@@ -8,6 +10,30 @@ exports.obtenerRecetas = async function (query, page, limit) {
         page,
         limit
     }
+    
+    /*let query //FILTROS - VER
+        if (filters){ 
+            if  ("categoria" in filters){
+                query = {"categoria": {$eq: filters["categoria"]}}
+            }
+            else if ("dificultad" in filters){
+                query = {"dificultad": {$eq: filters["dificultad"]}}
+            }
+            else if ("ingredientes" in filters){
+                query = {"ingredientes": {$eq: filters["ingredientes"]}}
+            }
+            else if ("calificacion" in filters){
+                query = {"calificacion": {$eq: filters["calificacion"]}}
+            }
+        }
+
+        let cursor //BUSCAR - VER
+        try {
+            cursor = await Recetas.find(query)
+        }
+        catch (e){
+            console.error(`Unable to issue find command, ${e}`)
+        }*/
 
     try {
         console.log("Query",query)
@@ -27,7 +53,10 @@ exports.crearReceta = async function (receta) {
         categoria: receta.categoria,
         dificultad: receta.dificultad,
         ingredientes: receta.ingredientes,
-        procedimiento: receta.procedimiento
+        procedimiento: receta.procedimiento,
+        calificacion: receta.calificacion,
+        date: new Date(),
+        autor: receta.autor,
     })
 
     try {
@@ -54,7 +83,9 @@ exports.editarReceta = async function (receta) {
     recetaAnterior.categoria = receta.categoria,
     recetaAnterior.dificultad = receta.dificultad,
     recetaAnterior.ingredientes = receta.ingredientes,
-    recetaAnterior.procedimiento = receta.procedimiento
+    recetaAnterior.procedimiento = receta.procedimiento,
+    recetaAnterior.calificacion = receta.calificacion
+
     try {
         var recetaGuardada = await recetaAnterior.save()
         return recetaGuardada;
@@ -63,20 +94,20 @@ exports.editarReceta = async function (receta) {
     }
 }
 
+
 //ERROR
 exports.eliminarReceta = async function (id) {
-
     try {
-        var recetaEliminada = await Receta.deleteOne({
-            "_id": ObjectID(id)
+        var deleted = await Receta.deleteOne({
+            _id: mongoose.Types.ObjectId(id)
         })
-        if (recetaEliminada.n === 0 && recetaEliminada.ok === 1) {
+        if (deleted.n === 0 && deleted.ok === 1) {
             throw Error("Receta Could not be deleted")
         }
-        //console.log("eliminada", recetaEliminada)
-        return recetaEliminada;
-        
+        return deleted;
     } catch (e) {
+        console.log(e)
         throw Error("Error Occured while Deleting the Receta")
     }
 }
+

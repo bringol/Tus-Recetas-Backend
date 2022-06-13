@@ -7,8 +7,11 @@ const recetaSchema = mongoose.Schema(
     categoria: String,
     dificultad: String,
     ingredientes: Array,
-    procedimiento: String
-    //imagen:
+    procedimiento: String, 
+    calificacion: Number,
+    date: Date,
+    autor: String,
+
   }, {versionKey: false}
 )
 

@@ -7,6 +7,37 @@ exports.obtenerRecetas = async function (req, res, next) {
     var page = req.query.page ? req.query.page : 1
     var limit = req.query.limit ? req.query.limit : 10;
 
+    /*let filters = {} //FILTROS - ver
+    if (req.query.categoria){
+        filters.categoria = req.query.categoria
+    }
+    else if  (req.query.dificultad){
+        filters.dificultad = req.query.dificultad
+    }
+    else if (req.query.ingredientes){
+        filters.ingredientes = req.query.ingredientes
+    }
+    else if (req.query.calificacion){
+        filters.calificacion = req.query.calificacion
+    }
+
+    //BUSCAR - ver
+    async function recetaPorCoincidencia(req, res, next){
+        try{
+            let name = req.params.name || {}
+            let receta = await recetaService.obtenerRecetasPorId(name)
+            if (!receta){
+                res.status(404).json({error: "Not found"})
+                return
+            }
+            res.json(receta)
+        }
+        catch (e){
+            console.log(`api, ${e}`)
+            res.status(500).json({error: e})
+        }
+    */
+
         try {
         var Recetas = await recetaService.obtenerRecetas({}, page, limit)
         return res.status(200).json({status: 200, data: Recetas, message: "Succesfully Recetas Recieved"});
@@ -57,18 +88,14 @@ exports.editarReceta = async function (req, res, next) {
     }
 }
 
-//ERROR
 exports.eliminarReceta = async function (req, res, next) {
-
-    var id = req.params.id;
+    var id = req.body.id;
     try {
         var deleted = await recetaService.eliminarReceta(id);
-        res.status(200).send("Succesfully Deleted... ");
+        return res.status(201).json({status: 201, data: id, message: "Succesfully Deleted Producto"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message})
     }
 }
 
-
-    
     
