@@ -102,7 +102,7 @@ exports.buscarReceta = async function (req, res, next) {
     try {
         //revisar cómo hacer para paginar 
         //https://stackoverflow.com/questions/28775051/best-way-to-perform-a-full-text-search-in-mongodb-and-mongoose
-        
+
         receta= await recetaService.buscarReceta(req,res)
 
         return res.status(201).json(receta)
@@ -113,4 +113,35 @@ exports.buscarReceta = async function (req, res, next) {
     }
 }
 
+// exports.buscarRecetaFiltro = async function (req, res, next) {
+//     try {
+//         //revisar cómo hacer para paginar 
+//         //https://stackoverflow.com/questions/28775051/best-way-to-perform-a-full-text-search-in-mongodb-and-mongoose
+        
+//         receta= await recetaService.buscarRecetaFiltro(req,res)
+
+//         return res.status(201).json(receta)
+
+        
+//     } catch (e) {
+//         return res.status(400).json({status: 400, message: e.message})
+//     }
+// }
+
+exports.RecetaByFiltro = async function (req, res, next) {
+
+    // Check the existence of the query parameters, If doesn't exists assign a default value
+    var page = req.query.page ? req.query.page : 1
+    var limit = req.query.limit ? req.query.limit : 10;
+    //encontrar la forma de hacer que considere varios filtros
+    let filtro= {dificultad: req.body.dificultad, categoria:req.body.categoria}
+    try {
+        var RecetasFiltradas = await recetaService.obtenerRecetas(filtro, page, limit)
+        // Return the Users list with the appropriate HTTP password Code and Message.
+        return res.status(200).json({status: 200, data: RecetasFiltradas, message: "Succesfully Recieved"});
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
     

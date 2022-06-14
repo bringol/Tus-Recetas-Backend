@@ -21,7 +21,7 @@ recetaSchema.index({name:"text"})//en este caso es solo para el nombre
 //Index con todos los filtros (testear)
 // recetaSchema.index({
 //   name:"text",
-//   ingredientes:"text",
+//   //ingredientes:"array",
 //   categoria:"text" ,
 //   dificultad:"text"})
 

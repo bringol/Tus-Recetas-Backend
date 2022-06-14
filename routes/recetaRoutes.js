@@ -7,5 +7,6 @@ router.post('/crear-receta/', recetaController.crearReceta)
 router.post('/editar-receta/', recetaController.editarReceta)
 router.delete('/eliminar-receta/', recetaController.eliminarReceta)
 router.post('/buscar/', recetaController.buscarReceta)
+router.post('/filtro/', recetaController.RecetaByFiltro)
 
 module.exports = router

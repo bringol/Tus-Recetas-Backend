@@ -129,3 +129,19 @@ exports.buscarReceta = async function (req, res, next) {
     }
 }
 
+// exports.buscarRecetaFiltro = async function (req, res, next) {
+//     try {
+//         //el campo que recibirá del query
+//         //let nombre = req.body.name
+//         //let ingredientes = req.body.name
+//         //let categoria = req.body.categoria
+//         //let dificultad = req.body.dificultad
+
+//         //el query
+//         let receta= await Receta.find( {name: req.body.name } )
+//         return(receta)
+//     } catch (e) {
+//         return (e)
+//     }
+// }
+
