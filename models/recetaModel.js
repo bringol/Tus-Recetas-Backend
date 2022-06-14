@@ -17,10 +17,15 @@ const recetaSchema = mongoose.Schema(
 
 //hace falta crear un index para poder realizar la busq
 recetaSchema.index({name:"text"})//en este caso es solo para el nombre
-//agrego los otros campos por separado para la parte de filtros
-recetaSchema.index({ingredientes:"text"})
-recetaSchema.index({categoria:"text"})
-recetaSchema.index({dificultad:"text"})
+//agrego los otros campos por separado para la parte de filtros EDIT: al parecer solo puede haber 1 index
+//Index con todos los filtros (testear)
+// recetaSchema.index({
+//   name:"text",
+//   ingredientes:"text",
+//   categoria:"text" ,
+//   dificultad:"text"})
+
+
 
 recetaSchema.plugin(mongoosePaginate)
 const Receta = mongoose.model('Receta', recetaSchema)
