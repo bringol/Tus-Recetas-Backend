@@ -1,7 +1,7 @@
 var userService = require('../services/userService');
 //testing
-const asyncHandler = require('express-async-handler')
-const User = require('../models/userModel')
+// const asyncHandler = require('express-async-handler')
+// const User = require('../models/userModel')
 
 
 exports.createUser = async function(req, res, next) {
@@ -53,6 +53,6 @@ exports.getUserByToken = async (req, res) => {
   }
 
   exports.getUserByEmail = async (req, res) => {
-    const {email}=await User.findOne({_id:req.user.email})
+    const {email}=await User.findById(req.user.email)
     res.status(200).json(req.user)
   }

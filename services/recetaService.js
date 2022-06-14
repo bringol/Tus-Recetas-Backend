@@ -111,3 +111,21 @@ exports.eliminarReceta = async function (id) {
     }
 }
 
+/*
+    POST /buscar
+    fuente: https://youtu.be/OEdPH4fV7vY?t=7711
+    busca solo por el nombre
+*/ 
+
+exports.buscarReceta = async function (req, res, next) {
+    try {
+        //el campo que recibirá del query
+        let termino = req.body.termino
+        //el query
+        let receta= await Receta.find( { $text: {$search: termino, $diacriticSensitive: true } } )
+        return(receta)
+    } catch (e) {
+        return (e)
+    }
+}
+

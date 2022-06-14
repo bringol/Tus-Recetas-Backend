@@ -98,4 +98,19 @@ exports.eliminarReceta = async function (req, res, next) {
     }
 }
 
+exports.buscarReceta = async function (req, res, next) {
+    try {
+        //revisar cómo hacer para paginar 
+        //https://stackoverflow.com/questions/28775051/best-way-to-perform-a-full-text-search-in-mongodb-and-mongoose
+        
+        receta= await recetaService.buscarReceta(req,res)
+
+        return res.status(201).json(receta)
+
+        
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message})
+    }
+}
+
     
