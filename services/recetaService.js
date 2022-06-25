@@ -117,18 +117,18 @@ exports.eliminarReceta = async function (id) {
     fuente: https://youtu.be/OEdPH4fV7vY?t=7711
     busca solo por el nombre
 */ 
-
-exports.buscarReceta = async function (req, res, next) {
-    try {
-        //el campo que recibirá del query
-        let termino = req.body.termino
-        //el query
-        let receta= await Receta.find( { $text: {$search: termino, $diacriticSensitive: true } } )
-        return(receta)
-    } catch (e) {
-        return (e)
-    }
-}
+//Deprecated
+// exports.buscarReceta = async function (req, res, next) {
+//     try {
+//         //el campo que recibirá del query
+//         let termino = req.body.termino
+//         //el query
+//         let receta= await Receta.find( { $text: {$search: termino, $diacriticSensitive: true } } )
+//         return(receta)
+//     } catch (e) {
+//         return (e)
+//     }
+// }
 
 // exports.buscarRecetaFiltro = async function (req, res, next) {
 //     try {
@@ -187,4 +187,34 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
     }
 }
 
+
+
+// @desc POST /buscar
+// @route   POST /api/recetas
+exports.buscarReceta = async function (req) {
+
+    try {
+       
+       let receta=await Receta.find( {
+        
+        name:{ $regex: req.body.name, $options: 'i'},
+        categoria:{ $regex: req.body.categoria, $options: 'i'},
+        dificultad:{ $regex: req.body.dificultad, $options: 'i'},
+        //ingredientes:{$regex: /harina/, $options: 'i'}
+        ingredientes:{$regex: req.body.ingredientes, $options: 'i'}
+        
+    
+        })
+        //revisar manejador de errores caso datos invalidos
+        return(receta)
+    } catch (e) {
+        return (e)
+    }
+
+}
+
+
+
+        
+        
 
