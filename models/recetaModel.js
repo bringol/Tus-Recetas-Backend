@@ -8,9 +8,12 @@ const recetaSchema = mongoose.Schema(
     dificultad: String,
     ingredientes: Array,
     procedimiento: String, 
-    calificacion: Number,
+    calificacionPromedio: Number,
+    calificacionTotal: Number,
+    usuariosTotales: Number,
     date: Date,
     autor: String,
+    //imagen
 
   }, {versionKey: false}
 )
@@ -24,7 +27,6 @@ recetaSchema.index({name:"text"})//en este caso es solo para el nombre
 //   //ingredientes:"array",
 //   categoria:"text" ,
 //   dificultad:"text"})
-
 
 
 recetaSchema.plugin(mongoosePaginate)

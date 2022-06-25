@@ -1,5 +1,6 @@
 var Receta = require('../models/recetaModel');
 const mongoose = require('mongoose');
+const Calificacion = require('../models/calificacionModel');
 
 
 _this = this
@@ -54,7 +55,9 @@ exports.crearReceta = async function (receta) {
         dificultad: receta.dificultad,
         ingredientes: receta.ingredientes,
         procedimiento: receta.procedimiento,
-        calificacion: receta.calificacion,
+        calificacionPromedio: 0,
+        calificacionTotal: 0,
+        usuariosTotales: 0,
         date: new Date(),
         autor: receta.autor,
     })
@@ -83,8 +86,8 @@ exports.editarReceta = async function (receta) {
     recetaAnterior.categoria = receta.categoria,
     recetaAnterior.dificultad = receta.dificultad,
     recetaAnterior.ingredientes = receta.ingredientes,
-    recetaAnterior.procedimiento = receta.procedimiento,
-    recetaAnterior.calificacion = receta.calificacion
+    recetaAnterior.procedimiento = receta.procedimiento
+    
 
     try {
         var recetaGuardada = await recetaAnterior.save()
@@ -94,8 +97,6 @@ exports.editarReceta = async function (receta) {
     }
 }
 
-
-//ERROR
 exports.eliminarReceta = async function (id) {
     try {
         var deleted = await Receta.deleteOne({
@@ -144,4 +145,46 @@ exports.buscarReceta = async function (req, res, next) {
 //         return (e)
 //     }
 // }
+
+
+exports.crearCalificacion = async function (calificacion) {
+  
+    var newCalificacion = new Calificacion({
+        idReceta: calificacion.idReceta,
+        calificacion: calificacion.calificacion,
+        autor: calificacion.autor,
+        date: new Date(),
+    })
+
+    try {
+        await newCalificacion.save();
+    } catch (e) {
+        console.log(e)    
+        throw Error("Error while Creating Receta")
+    }
+}
+
+exports.actualizarPromedio = async function (idReceta, calificacion) {
+    
+    var id = idReceta
+
+    try {
+        var recetaAnterior = await Receta.findOne(id);
+        const suma = recetaAnterior.calificacionTotal + calificacion
+        const cont = recetaAnterior.usuariosTotales + 1
+        recetaAnterior.calificacionPromedio = suma/cont
+    } catch (e) {
+        throw Error("Error occured while Finding the Receta")
+    }
+    if (!recetaAnterior) {
+        return false;
+    }
+    try {
+        var recetaGuardada = await recetaAnterior.save()
+        return recetaGuardada;
+    } catch (e) {
+        throw Error("And Error occured while updating the Receta");
+    }
+}
+
 
