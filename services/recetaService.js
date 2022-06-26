@@ -79,14 +79,23 @@ exports.editarReceta = async function (receta) {
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
-    if (!recetaAnterior) {
+    if (!recetaAnterior) 
         return false;
-    }
-    recetaAnterior.name = receta.name,
-    recetaAnterior.categoria = receta.categoria,
-    recetaAnterior.dificultad = receta.dificultad,
-    recetaAnterior.ingredientes = receta.ingredientes,
-    recetaAnterior.procedimiento = receta.procedimiento
+    
+    if(receta.name !==null)
+        recetaAnterior.name = receta.name
+
+    if(receta.categoria!==null)
+        recetaAnterior.categoria = receta.categoria
+
+    if(receta.dificultad!==null)
+        recetaAnterior.dificultad = receta.dificultad
+
+    if(receta.ingredientes!==null)
+        recetaAnterior.ingredientes = receta.ingredientes
+
+    if(receta.procedimiento!==null)
+        recetaAnterior.procedimiento = receta.procedimiento
     
 
     try {
@@ -201,9 +210,10 @@ exports.buscarReceta = async function (req) {
         categoria:{ $regex: req.body.categoria, $options: 'i'},
         dificultad:{ $regex: req.body.dificultad, $options: 'i'},
         //ingredientes:{$regex: /harina/, $options: 'i'}
-        ingredientes:{$regex: req.body.ingredientes, $options: 'i'}
-        
-    
+        //ingredientes:{$regex: req.body.ingredientes, $options: 'i'}
+        //ingredientes:{$in: ["agua","ricota"]}
+        ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
+        //mayusc, minsusc y diacriticos para ingredientes?
         })
         //revisar manejador de errores caso datos invalidos
         return(receta)
