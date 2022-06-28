@@ -76,7 +76,6 @@ exports.loginUser = asyncHandler(async (req, res) => {
 })
 
 
-
 // @desc    Get user data
 // @route   GET /api/users/me
 // @access  Private
@@ -90,6 +89,98 @@ const generateToken = (id) => {
     expiresIn: '24h',
   })
 }
+
+
+exports.editarUser = async function (usuario) {
+    
+  var id = {email: usuario.email}
+      
+   try {
+        var userAnterior = await User.findOne(id);
+    } catch (e) {
+        throw Error("Ocurrió un error en la busqueda del usuario")
+    }
+    
+  if(usuario.nombre !==null){
+    userAnterior.nombre = usuario.nombre
+    console.log(userAnterior.nombre)
+    //console.log(userAnterior)
+  }
+
+  if(usuario.apellido!==null)
+    userAnterior.apellido = usuario.apellido
+
+  if(usuario.telefono!==null)
+    userAnterior.telefono = usuario.telefono
+  
+    //console.log(userAnterior)
+  try {
+    const usuarioGuardado = await userAnterior.save()
+      return usuarioGuardado;
+  } catch (e) {
+    console.log(userAnterior)
+      throw Error("Ocurrió un error mientras en la actualizacion del usuario");
+  }
+}
+
+/********************************************************* */
+exports.buscarUser = async function (req,res) {
+    try {
+          /*
+         fuente: https://youtu.be/OEdPH4fV7vY?t=7711
+         busca solo por el nombre
+           */ 
+
+
+        //let usuario= await User.find( {$match : {email: "fer@gmail.com" } } )
+        //let usuario= await User.find( { $text: {$search: req.body.email} } )
+        //let usuario= await User.find( {email:{ $regex: `^${req.body.email}`}})
+        //let usuario= await User.find( {email: "fer@gmail.com" } )
+
+        //source https://stackoverflow.com/questions/43779319/mongodb-text-search-exact-match-using-variable
+        let usuario= await User.find( {email: `${req.body.email}` } )
+
+
+       if(usuario.length===0)
+        //console.log("vacio")
+        return res.status(400).json({status: 401, data: null, message:"No existe"})
+        //return(false)
+        
+       else
+        return res.status(201).json(usuario)
+        //return(usuario)
+
+    } catch (e) {
+      return res.status(400).json({status: 400, message: e.message})
+      //throw Error("Ocurrió un error en la busqueda email");
+    }
+}
+
+
+//testeo update password
+
+
+
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private
+exports.updateUser3 = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id) //id del usr
+
+
+// Check for user
+if (!req.user) {
+  res.status(401)
+  throw new Error('User not found')
+}
+
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true, //si no existe lo crea
+  })
+
+  res.status(200).json(updatedUser)
+})
+
 
 //-----------
 // @desc    Update user
@@ -138,48 +229,6 @@ exports.updateUser = asyncHandler(async (req, res) => {
 
 })
 
-exports.editarUser = async function (usuario) {
-    
-  //var id = {email: usuario.email}
-
-  //var userAnterior = await User.findOne(id);
-  const userAnterior= await User.find( {email: `${usuario.email}` } )
-  //const {usuario}=req.body
-  console.log(userAnterior.id)
-  
-  
-  if (userAnterior.length===0) 
-      return false;
-
-      // else
-      // {
-      //    const userAnterior= await User.findOne(busqueda.id);
-      // }
-      
-  
-  if(usuario.nombre !==null){
-    userAnterior.nombre = usuario.nombre
-    console.log(userAnterior.nombre)
-    //console.log(userAnterior)
-  }
-
-  if(usuario.apellido!==null)
-    userAnterior.apellido = usuario.apellido
-
-  if(usuario.telefono!==null)
-    userAnterior.telefono = usuario.telefono
-  
-    //console.log(userAnterior)
-  try {
-    const usuarioGuardado = await userAnterior.save()
-      return usuarioGuardado;
-  } catch (e) {
-    console.log(userAnterior)
-      throw Error("And Error occured while updating the User");
-  }
-}
-
-
 
 exports.updateUser2 = asyncHandler(async (req, res) => {
   const user = await User.findById(req.body.id) //id del usr
@@ -211,107 +260,6 @@ else
       }   
   //res.status(200).json(updatedUser)
 })
-
-exports.editarUser = async function (usuario) {
-    
-  var id = {email: usuario.email}
-
-  //var userAnterior = await User.findOne(id);
-  //const userAnterior= await User.find( {email: `${usuario.email}` } )
-  //const {usuario}=req.body
-  // console.log(userAnterior.id)
-  
-  
-  // if (userAnterior.length===0) 
-  //     return false;
-
-      // else
-      // {
-      //    const userAnterior= await User.findOne(busqueda.id);
-      // }
-      
-   try {
-        var userAnterior = await User.findOne(id);
-    } catch (e) {
-        throw Error("Error occured while Finding the Receta")
-    }
-    
-  if(usuario.nombre !==null){
-    userAnterior.nombre = usuario.nombre
-    console.log(userAnterior.nombre)
-    //console.log(userAnterior)
-  }
-
-  if(usuario.apellido!==null)
-    userAnterior.apellido = usuario.apellido
-
-  if(usuario.telefono!==null)
-    userAnterior.telefono = usuario.telefono
-  
-    //console.log(userAnterior)
-  try {
-    const usuarioGuardado = await userAnterior.save()
-      return usuarioGuardado;
-  } catch (e) {
-    console.log(userAnterior)
-      throw Error("And Error occured while updating the User");
-  }
-}
-
-/*
-    fuente: https://youtu.be/OEdPH4fV7vY?t=7711
-    busca solo por el nombre
-*/ 
-
-exports.buscarUser = async function (req,res) {
-    try {
-        
-
-        //let usuario= await User.find( {$match : {email: "fer@gmail.com" } } )
-        //let usuario= await User.find( { $text: {$search: req.body.email} } )
-        //let usuario= await User.find( {email:{ $regex: `^${req.body.email}`}})
-        //let usuario= await User.find( {email: "fer@gmail.com" } )
-
-        //source https://stackoverflow.com/questions/43779319/mongodb-text-search-exact-match-using-variable
-        let usuario= await User.find( {email: `${req.body.email}` } )
-
-
-       if(usuario.length===0)
-        //console.log("vacio")
-        return res.status(400).json({status: 401, data: null, message:"No existe"})
-        //return(false)
-        
-       else
-        return res.status(201).json(usuario)
-        //return(usuario)
-
-    } catch (e) {
-      return res.status(400).json({status: 400, message: e.message})
-      //throw Error("Ocurrió un error en la busqueda email");
-    }
-}
-
-
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private
-exports.updateUser3 = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id) //id del usr
-
-
-// Check for user
-if (!req.user) {
-  res.status(401)
-  throw new Error('User not found')
-}
-
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, //si no existe lo crea
-  })
-
-  res.status(200).json(updatedUser)
-})
-
 
 
 
