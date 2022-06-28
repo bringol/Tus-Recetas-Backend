@@ -52,6 +52,27 @@ exports.editarUser = async function (req, res, next) {
     }
 }
 
+exports.editarPassword = async function (req, res, next) {
+
+    if (!req.body.email) {
+        return res.status(400).json({status: 400., message: "Email be present"})
+    }
+
+    var User = {
+        password: req.body.password ? req.body.password : null,
+        email: req.body.email
+    }
+    try {
+        var userActualizado = await userService.editarPassword(User)
+        return res.status(200).json({
+            status: 200,
+            //data: userActualizado, 
+            message: "Succesfully Updated User"})
+    } catch (e) {
+        return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
 
 
 exports.loginUser = async function(req, res, next) {

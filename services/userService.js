@@ -90,7 +90,9 @@ const generateToken = (id) => {
   })
 }
 
-
+// @desc    Editar info perfil usr
+// @route   PUT /api/users/editar/perfil
+// @access  Private
 exports.editarUser = async function (usuario) {
     
   var id = {email: usuario.email}
@@ -122,6 +124,41 @@ exports.editarUser = async function (usuario) {
       throw Error("Ocurrió un error mientras en la actualizacion del usuario");
   }
 }
+
+
+// @desc    Editar contraseña usr
+// @route   PUT /api/users/editar/password
+// @access  Private
+exports.editarPassword = async function (usuario) {
+    
+  var id = {email: usuario.email}
+      
+   try {
+        var userAnterior = await User.findOne(id);
+        //console.log("antes",userAnterior.password)
+    } catch (e) {
+        throw Error("Ocurrió un error en la busqueda del usuario")
+    }
+    
+  if(usuario.password !==null){
+    var hashedPassword = bcrypt.hashSync(usuario.password, 8);
+    usuario.password=hashedPassword
+    userAnterior.password = usuario.password
+    //console.log("despues",userAnterior.password)
+    //console.log(userAnterior)
+  }
+
+  try {
+    const usuarioGuardado = await userAnterior.save()
+      return usuarioGuardado;
+  } catch (e) {
+    //console.log(userAnterior)
+      throw Error("Ocurrió un error mientras en la actualizacion del usuario");
+  }
+}
+
+
+
 
 /********************************************************* */
 exports.buscarUser = async function (req,res) {
@@ -157,109 +194,109 @@ exports.buscarUser = async function (req,res) {
 }
 
 
-//testeo update password
+// //testeo update password
 
 
 
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private
-exports.updateUser3 = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id) //id del usr
+// // @desc    Update user
+// // @route   PUT /api/users/:id
+// // @access  Private
+// exports.updateUser3 = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.params.id) //id del usr
 
 
-// Check for user
-if (!req.user) {
-  res.status(401)
-  throw new Error('User not found')
-}
+// // Check for user
+// if (!req.user) {
+//   res.status(401)
+//   throw new Error('User not found')
+// }
 
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, //si no existe lo crea
-  })
+//   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true, //si no existe lo crea
+//   })
 
-  res.status(200).json(updatedUser)
-})
+//   res.status(200).json(updatedUser)
+// })
 
 
-//-----------
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @route   PUT /api/users/update/
-// @access  Private
-exports.updateUser = asyncHandler(async (req, res) => {
-  const { userid } = req.params;
-  let password=req.body.password
-  let newPassword=null
+// //-----------
+// // @desc    Update user
+// // @route   PUT /api/users/:id
+// // @route   PUT /api/users/update/
+// // @access  Private
+// exports.updateUser = asyncHandler(async (req, res) => {
+//   const { userid } = req.params;
+//   let password=req.body.password
+//   let newPassword=null
 
-  const user= await User.findById(userid)
-  console.log("en el servicio",user)
-        //.then((user) => {
-          if (user.password !== password) {
-            const salt = bcrypt.genSaltSync(10);
-            newPassword = bcrypt.hashSync(password, salt);
+//   const user= await User.findById(userid)
+//   console.log("en el servicio",user)
+//         //.then((user) => {
+//           if (user.password !== password) {
+//             const salt = bcrypt.genSaltSync(10);
+//             newPassword = bcrypt.hashSync(password, salt);
     
-            password = newPassword;
-            console.log(newPassword);
-          }
-         // return password;
-// I am returning the password to be able to pass it to the next then() and 
-// use it as follows
+//             password = newPassword;
+//             console.log(newPassword);
+//           }
+//          // return password;
+// // I am returning the password to be able to pass it to the next then() and 
+// // use it as follows
         
-        //.then((password) => {
-          const updatedUser= await User.findByIdAndUpdate(
-            userid,
-            {
-              password,              
-            },
-            { new: true }
-          )
-            .then((response) => {
-              console.log("response after update", response);
-              res.status(200).json({ message: `User ${userid} has been updated` });
-            })
-            .catch((err) => {
-              console.log(err);
-              res
-                .status(500)
-                .json({ message: "Something went wrong updating the user" });
-            });
-        //});
+//         //.then((password) => {
+//           const updatedUser= await User.findByIdAndUpdate(
+//             userid,
+//             {
+//               password,              
+//             },
+//             { new: true }
+//           )
+//             .then((response) => {
+//               console.log("response after update", response);
+//               res.status(200).json({ message: `User ${userid} has been updated` });
+//             })
+//             .catch((err) => {
+//               console.log(err);
+//               res
+//                 .status(500)
+//                 .json({ message: "Something went wrong updating the user" });
+//             });
+//         //});
     
 
-})
+// })
 
 
-exports.updateUser2 = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.body.id) //id del usr
-  console.log(user)
+// exports.updateUser2 = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.body.id) //id del usr
+//   console.log(user)
 
 
 
-// Chequeo user
-if (user===null) {
-  res.status(401)
-  throw new Error('Usr no encontrado')
-}
-if (!req.body.password===null)
-//en caso de aplicarse, hago que el password lo guarde con hash
-{
-    var hashedPassword = bcrypt.hashSync(user.password, 8);
-    //user.telefono=req.body.telefono
-    //req.body.telefono
-    req.body.password= hashedPassword
-    const updatedUser = await User.findByIdAndUpdate(req.body.id, req.body.password, {
-    new: true, //si no existe lo crea
-  })
-}
-else
-    //console.log("el email no se cambia")
-    {
-        res.status(400)
-        throw new Error('Datos de usuario inválidos')
-      }   
-  //res.status(200).json(updatedUser)
-})
+// // Chequeo user
+// if (user===null) {
+//   res.status(401)
+//   throw new Error('Usr no encontrado')
+// }
+// if (!req.body.password===null)
+// //en caso de aplicarse, hago que el password lo guarde con hash
+// {
+//     var hashedPassword = bcrypt.hashSync(user.password, 8);
+//     //user.telefono=req.body.telefono
+//     //req.body.telefono
+//     req.body.password= hashedPassword
+//     const updatedUser = await User.findByIdAndUpdate(req.body.id, req.body.password, {
+//     new: true, //si no existe lo crea
+//   })
+// }
+// else
+//     //console.log("el email no se cambia")
+//     {
+//         res.status(400)
+//         throw new Error('Datos de usuario inválidos')
+//       }   
+//   //res.status(200).json(updatedUser)
+// })
 
 
 
