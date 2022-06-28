@@ -11,30 +11,6 @@ exports.obtenerRecetas = async function (query, page, limit) {
         page,
         limit
     }
-    
-    /*let query //FILTROS - VER
-        if (filters){ 
-            if  ("categoria" in filters){
-                query = {"categoria": {$eq: filters["categoria"]}}
-            }
-            else if ("dificultad" in filters){
-                query = {"dificultad": {$eq: filters["dificultad"]}}
-            }
-            else if ("ingredientes" in filters){
-                query = {"ingredientes": {$eq: filters["ingredientes"]}}
-            }
-            else if ("calificacion" in filters){
-                query = {"calificacion": {$eq: filters["calificacion"]}}
-            }
-        }
-
-        let cursor //BUSCAR - VER
-        try {
-            cursor = await Recetas.find(query)
-        }
-        catch (e){
-            console.error(`Unable to issue find command, ${e}`)
-        }*/
 
     try {
         console.log("Query",query)
@@ -76,6 +52,7 @@ exports.editarReceta = async function (receta) {
 
     try {
         var recetaAnterior = await Receta.findOne(id);
+        //similar o equivalente a find({name: receta.name})
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }

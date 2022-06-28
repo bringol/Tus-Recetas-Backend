@@ -30,4 +30,7 @@ const userSchema = mongoose.Schema(
   }
 )
 
+
+
+userSchema.index({email:"text"})
 module.exports = mongoose.model('User', userSchema)
