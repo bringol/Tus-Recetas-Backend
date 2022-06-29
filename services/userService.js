@@ -54,23 +54,28 @@ exports.registerUser = asyncHandler(async (req, res) => {
 // @desc    Autenticar un usr
 // @route   POST /api/users/login
 // @access  Public
-exports.loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body
+exports.loginUser = asyncHandler(async (userlogin) => {
+  const { email, password } = userlogin
 
   // Chequeo mediante email de usr
   const user = await User.findOne({ email })
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({
-       _id: user.id,
+    // res.json({
+    //   _id: user.id,
     //   nombre: user.nombre,
     //   apellido: user.apellido,
     //   telefono: user.telefono,
     //   email: user.email,
-      token: generateToken(user._id),
-    })
+    //   token: generateToken(user._id),    
+    // })
+
+    var token= generateToken(user.id)
+    return{token:token,user:user}
+
+
   } else {
-    res.status(400)
+    //res.status(400)
     throw new Error('Credenciales inválidas')
   }
 })
