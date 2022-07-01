@@ -9,7 +9,7 @@ _this = this;
 exports.obtenerRecetas = async function (req, res, next) {
 
     var page = req.query.page ? req.query.page : 1
-    var limit = req.query.limit ? req.query.limit : 10;
+    var limit = req.query.limit ? req.query.limit : 8;
 
         try {
         var Recetas = await recetaService.obtenerRecetas({}, page, limit)
