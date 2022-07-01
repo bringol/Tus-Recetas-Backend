@@ -6,8 +6,8 @@ const User = require('../models/userModel')
 // @desc    Registrar usr nuevo
 // @route   POST /api/users
 // @access  Public
-exports.registerUser = asyncHandler(async (req, res) => {
-  const { nombre, apellido, telefono, email, password } = req.body
+exports.registerUser = asyncHandler(async (usr) => {
+  const { nombre, apellido, telefono, email, password } = usr
 
   if (!nombre || !apellido || !telefono || !email || !password) {
     res.status(400)
@@ -18,33 +18,37 @@ exports.registerUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email })
 
   if (userExists) {
-    res.status(400)
-    throw new Error('Usuario ya existe')
+    //res.status(400)
+    throw new Error('Ya existe correo electrónico ')
   }
 
   // Hash password
   const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
+  const hashedPassword = await bcrypt.hash(usr.password, salt)
 
   // Creacion de user
   const user = await User.create({
-    nombre,
-    apellido,
-    telefono,
-    email,
+    nombre:usr.nombre,
+    apellido:usr.apellido,
+    telefono:usr.telefono,
+    email:usr.email,
     password: hashedPassword,
   })
 
   if (user) {
     //console.log("Bien")
-    res.status(201).json({
-      _id: user.id,
-    //   nombre: user.nombre,
-    //   apellido: user.apellido,
-    //   telefono: user.telefono,
-    //   email: user.email,
-      token: generateToken(user._id),
-    })
+    // res.status(201).json({
+    //   _id: user.id,
+    // //   nombre: user.nombre,
+    // //   apellido: user.apellido,
+    // //   telefono: user.telefono,
+    // //   email: user.email,
+    //   token: generateToken(user._id),
+    // })
+
+    var token= generateToken(user.id)
+    return{token:token,user:user}
+
   } else {
     res.status(400)
     throw new Error('Datos de usuario inválidos')

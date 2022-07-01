@@ -7,14 +7,22 @@ var userService = require('../services/userService');
 exports.createUser = async function(req, res, next) {
     // Req.Body contains the form submit values.
     console.log("llegue al controller", req.body)
+    console.log("body", req.body)
+    var User = {
+        nombre: req.body.nombre,
+        apellido: req.body.apellido,
+        telefono: req.body.telefono,
+        email: req.body.email,
+        password: req.body.password
+    }
     
     try {
         // Calling the Service function with the new object from the Request Body
-        var createdUser = await userService.registerUser(req,res)
-        //return res.status(201).json({ createdUser, message: "Succesfully Created User" })
+        var createdUser = await userService.registerUser(User)
+        return res.status(201).json({ createdUser, message: "Succesfully Created User" })
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
-        console.log(e)
+        //console.log(e)
         return res.status(400).json({ status: 400, message: e.message })
     }
 }
