@@ -111,22 +111,23 @@ exports.eliminarReceta = async function (req, res, next) {
 
 exports.calificarReceta = async function (req, res, next) {
 
-    if (!req.body.name) {
+    /*if (!req.body.name) {
         return res.status(400).json({status: 400., message: "Name be present"})
-    }
+    */
 
     var Calificacion = {
         idReceta: req.body.idReceta ? req.body.idReceta : null ,//ver
         autor: req.body.autor ? req.body.autor : null ,//ver
         calificacion: req.body.calificacion ? req.body.calificacion : null //ver
     }
-    
+   
     try {
+        console.log(Calificacion)
         var crearCalificacion = await recetaService.crearCalificacion(Calificacion)
-        var actualizarPromedio = await recetaService.calificarReceta(Calificacion.idReceta, Calificacion.calificacion)
+        var actualizarPromedio = await recetaService.actualizarPromedio(Calificacion.idReceta, Calificacion.calificacion)
         return res.status(200).json({status: 200, data: crearCalificacion, actualizarPromedio, message: "Succesfully Updated Receta"})
     } catch (e) {
-        return res.status(400).json({status: 400, message: e.message})
+        return res.status(400).json({status: 400., message: e.message})
     }
 }
 

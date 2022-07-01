@@ -134,6 +134,8 @@ exports.eliminarReceta = async function (id) {
 
 
 exports.crearCalificacion = async function (calificacion) {
+
+    console.log("entra al service")
   
     var newCalificacion = new Calificacion({
         idReceta: calificacion.idReceta,
@@ -141,9 +143,11 @@ exports.crearCalificacion = async function (calificacion) {
         autor: calificacion.autor,
         date: new Date(),
     })
-
+    console.log("new calificacion", newCalificacion)
     try {
+       
         await newCalificacion.save();
+        
     } catch (e) {
         console.log(e)    
         throw Error("Error while Creating Receta")
@@ -152,13 +156,19 @@ exports.crearCalificacion = async function (calificacion) {
 
 exports.actualizarPromedio = async function (idReceta, calificacion) {
     
-    var id = idReceta
+    console.log("entra al service promedio")
+    var id = {idReceta}
+
+    calificacion = +`${calificacion}`
 
     try {
         var recetaAnterior = await Receta.findOne(id);
         const suma = recetaAnterior.calificacionTotal + calificacion
         const cont = recetaAnterior.usuariosTotales + 1
-        recetaAnterior.calificacionPromedio = suma/cont
+        console.log("calif total", recetaAnterior.calificacionTotal)
+        recetaAnterior.calificacionTotal = suma
+        recetaAnterior.usuariosTotales = cont
+        recetaAnterior.calificacionPromedio = (suma/cont).toFixed(0)
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -172,7 +182,6 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
         throw Error("And Error occured while updating the Receta");
     }
 }
-
 
 
 // @desc POST /buscar
