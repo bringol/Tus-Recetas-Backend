@@ -27,18 +27,18 @@ exports.createUser = async function(req, res, next) {
     }
 }
 
-exports.updatePassword = async function(req, res, next) {
+// exports.updatePassword = async function(req, res, next) {
 
-    console.log("llegue al controller", req.body)
+//     console.log("llegue al controller", req.body)
     
-     try {
-        var updatedUser = await userService.updateUser(req,res)
+//      try {
+//         var updatedUser = await userService.updateUser(req,res)
         
-        //return res.status(200).json( "Succesfully Updated Password", updatedUser )
-    } catch (e) {
-        return res.status(400).json({ status: 400., message: e.message })
-    }
-}
+//         //return res.status(200).json( "Succesfully Updated Password", updatedUser )
+//     } catch (e) {
+//         return res.status(400).json({ status: 400., message: e.message })
+//     }
+// }
 
 exports.editarUser = async function (req, res, next) {
 
