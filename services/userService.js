@@ -112,17 +112,19 @@ exports.editarUser = async function (usuario) {
         throw Error("Ocurrió un error en la busqueda del usuario")
     }
     
-  if(usuario.nombre !==null){
+  if(usuario.nombre !==null && (usuario.nombre!==userAnterior.nombre) ){
     userAnterior.nombre = usuario.nombre
     console.log(userAnterior.nombre)
     //console.log(userAnterior)
   }
 
-  if(usuario.apellido!==null)
+  if(usuario.apellido!==null && (usuario.apellido!==userAnterior.apellido))
     userAnterior.apellido = usuario.apellido
+    console.log(userAnterior.apellido)
 
-  if(usuario.telefono!==null)
+  if(usuario.telefono!==null && (usuario.telefono!==userAnterior.telefono))
     userAnterior.telefono = usuario.telefono
+    console.log(userAnterior.telefono)
   
     //console.log(userAnterior)
   try {
@@ -130,7 +132,7 @@ exports.editarUser = async function (usuario) {
       return usuarioGuardado;
   } catch (e) {
     console.log(userAnterior)
-      throw Error("Ocurrió un error mientras en la actualizacion del usuario");
+      throw Error("Ocurrió un error en la actualizacion del usuario");
   }
 }
 
