@@ -202,7 +202,7 @@ exports.olvidoPassword= async function (usuario) {
             html: `
                   <h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
                   <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
-                  <h3>${process.env.URL_FRONT}/reset/${token}</h3>
+                  <h3>${process.env.URL_FRONT}/reinicio/${token}</h3>
                   `   
           }
           //enviamos el mail
@@ -228,26 +228,30 @@ exports.olvidoPassword= async function (usuario) {
 // @desc    Cambio de contraseña y seteo de parámetros de reinicio
 // @route   PUT /api/users/reinicio
 // @access  Private
-exports.reinicioPassword = async function (dato,res) {
+exports.reinicioPassword = async function (datos) {
   //fuente https://www.youtube.com/watch?v=MfqyFcP6hTY&list=PLB97yPrFwo5g0FQr4rqImKa55F_aPiQWk&index=50&t=294s
-    const newPassword = dato.password
-    const sentToken = dato.token
-    User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
-      .then(user=>{
-          if(!user){
-              return res.status(400).json({error:"Reinicio expirado"})
-          }
-          bcrypt.hash(newPassword,10).then(hashedpassword=>{
-             user.password = hashedpassword
-             user.resetToken = undefined
-             user.expireToken = undefined
-             user.save().then(()=>{
-                 res.status(200).json({message:"Contraseña modificada exitosamente"})
-             })
-          })
-      }).catch(err=>{
-          console.log(err)
-    })
+    const newPassword = datos.password
+    const sentToken = datos.token
+    try{
+      
+      var usuario= await User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+
+      if(!usuario){
+          throw Error("Reinicio expirado")
+      }
+      bcrypt.hash(newPassword,10).then(hashedpassword=>{
+        usuario.password = hashedpassword
+        usuario.resetToken = undefined
+        usuario.expireToken = undefined
+        usuario.save()
+        //res.status(200).json({message:"Contraseña modificada exitosamente"})
+        //return {message:"Contraseña modificada exitosamente"}
+        
+      })
+    }
+    catch(e){
+      throw Error(e);
+    }
   }
 
 

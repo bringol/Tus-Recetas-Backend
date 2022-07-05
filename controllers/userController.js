@@ -6,7 +6,7 @@ var userService = require('../services/userService');
 
 exports.createUser = async function(req, res, next) {
     // Req.Body contains the form submit values.
-    console.log("llegue al controller", req.body)
+    //console.log("llegue al controller", req.body)
     console.log("body", req.body)
     var User = {
         nombre: req.body.nombre,
@@ -19,7 +19,7 @@ exports.createUser = async function(req, res, next) {
     try {
         // Calling the Service function with the new object from the Request Body
         var createdUser = await userService.registerUser(User)
-        return res.status(201).json({ createdUser, message: "Succesfully Created User" })
+        return res.status(201).json({ createdUser, message: "Creacion exitosa de usuario" })
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         //console.log(e)
@@ -49,7 +49,7 @@ exports.loginUser = async function(req, res, next) {
 exports.editarUser = async function (req, res, next) {
 
     if (!req.body.email) {
-        return res.status(400).json({status: 400., message: "Email be present"})
+        return res.status(400).json({status: 400., message: "Email debe estar presente"})
     }
 
     var User = {
@@ -60,7 +60,7 @@ exports.editarUser = async function (req, res, next) {
     }
     try {
         var userActualizado = await userService.editarUser(User)
-        return res.status(200).json({status: 200, data: userActualizado, message: "Succesfully Updated User"})
+        return res.status(200).json({status: 200, data: userActualizado, message: "Usuario actualizado exitorsamente"})
     } catch (e) {
         return res.status(400).json({status: 400., message: e.message})
     }
@@ -69,7 +69,7 @@ exports.editarUser = async function (req, res, next) {
 exports.editarPassword = async function (req, res, next) {
 
     if (!req.body.email) {
-        return res.status(400).json({status: 400., message: "Email be present"})
+        return res.status(400).json({status: 400., message: "Email debe estar presente"})
     }
 
     var User = {
@@ -108,7 +108,7 @@ exports.getUserByEmail = async (req, res) => {
 exports.olvidoPassword = async function (req, res, next) {
 
     if (!req.body.email) {
-        return res.status(400).json({status: 400, message: "Email be present"})
+        return res.status(400).json({status: 400, message: "Email debe estar presente"})
     }
 
     var User = {
@@ -135,8 +135,8 @@ exports.reinicioPassword = async function (req, res, next) {
         password: req.body.password
     }
     try {
-        var reinicio = await userService.reinicioPassword(User,res)
-        return reinicio
+        await userService.reinicioPassword(User,res)
+        return res.status(200).json({status: 200, message: "Contraseña reiniciada exitosamente"})
         
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message})
