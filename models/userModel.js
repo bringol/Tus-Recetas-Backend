@@ -23,7 +23,12 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, 'Completar el campo de contraseña'],
     },
-
+    resetToken:String,
+    expireToken:Date,
+    // resetToken:{
+    //   data: String,
+    //   default:''
+    // }
   },
   {
     timestamps: true,

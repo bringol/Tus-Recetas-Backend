@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
+const nodemailer=require("nodemailer")
+
 
 // @desc    Registrar usr nuevo
 // @route   POST /api/users
@@ -65,14 +67,6 @@ exports.loginUser = asyncHandler(async (userlogin) => {
   const user = await User.findOne({ email })
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    // res.json({
-    //   _id: user.id,
-    //   nombre: user.nombre,
-    //   apellido: user.apellido,
-    //   telefono: user.telefono,
-    //   email: user.email,
-    //   token: generateToken(user._id),    
-    // })
 
     var token= generateToken(user.id)
     return{token:token,user:user}
@@ -89,7 +83,7 @@ exports.loginUser = asyncHandler(async (userlogin) => {
 // @route   GET /api/users/me
 // @access  Private
 exports.getMe = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user)
+  res.status(200).json("req.user.email")
 })
 
 // Genera JWT
@@ -169,21 +163,114 @@ exports.editarPassword = async function (usuario) {
 }
 
 
+exports.olvidoPassword= async function (req,res) {
+//source https://www.youtube.com/watch?v=NOuiitBbAcU
+  const email=req.body.email
+  User.findOne({email})
+  .then(user=>{
+      if(!user){
+          return res.status(422).json({error:"User dont exists with that email"})
+      }
+      const token=jwt.sign({_id: user._id}, process.env.RESET_PASS_KEY)
+      user.resetToken = token
+      user.expireToken = Date.now() + 360000
+      user.save().then((result)=>{
+          //parámetros nodemailer
+          const transporter = nodemailer.createTransport({
+            service:"Gmail",
+            auth:{
+              user:`${process.env.NODEMAILER_USER}`,
+              pass:`${process.env.NODEMAILER_PASS}`,
+            },
+          });
+          //conenido del mail
+          const mailOptions={
+          from:`${process.env.NODEMAILER_USER}`,
+          to:`${email}`,
+          subject: "Tus-Recetas: Olvido de Contraseña ",
+          html: `<h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
+                 <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
+                 <h3>${process.env.URL_FRONT}/reset/${token}</h3>
+                `   
+          }
+          transporter.sendMail(mailOptions,(error, info)=>{
+            if(error){
+              //res.status(401).send(error.message)
+              throw Error(error.message)
+            }else{
+              //console.log("mail enviado exitosamente")
+              //return(token)
+              res.status(200).json("mail enviado exitosamente a: "+`${email}`)
+            }
+          })
+      })
+
+  })
+
+}
+
+exports.reinicioPassword = async function (req,res) {
+  //fuente https://www.youtube.com/watch?v=MfqyFcP6hTY&list=PLB97yPrFwo5g0FQr4rqImKa55F_aPiQWk&index=50&t=294s
+    const newPassword = req.body.password
+    const sentToken = req.body.token
+    User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+    .then(user=>{
+        if(!user){
+            return res.status(422).json({error:"Try again session expired"})
+        }
+        bcrypt.hash(newPassword,10).then(hashedpassword=>{
+           user.password = hashedpassword
+           user.resetToken = undefined
+           user.expireToken = undefined
+           user.save().then(()=>{
+               res.json({message:"password update success"})
+           })
+        })
+    }).catch(err=>{
+        console.log(err)
+    })
+}
+
+
+
+
+exports.envioMail = async function(email){
+  const transporter = nodemailer.createTransport({
+    service:"Gmail",
+    auth:{
+      user:`${process.env.NODEMAILER_USER}`,
+      pass:`${process.env.NODEMAILER_PASS}`,
+    },
+  });
+
+  const mailOptions={
+    from:`${process.env.NODEMAILER_USER}`,
+    to:`${email}`,
+    subject: "Tus-Recetas: Olvido de Contraseña ",
+    //text:"Tu nueva constraseña es: "+`${password}`,
+    text:
+    "Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.\n\n"
+    + "Por favor, seleccione el siguiente enlace, o cópielo en un navegador para completar el proceso a la hora de haberlo recibido:\n\n"
+    + `http://localhost:3000/reset/${token}\n\n`
+    +"Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.\n"
+  }
+  //enviamos el mail
+  transporter.sendMail(mailOptions,(error, info)=>{
+    if(error){
+      res.status(401).send(error.message)
+    }else{
+      console.log("mail enviado")
+      res.status(200).json(req.body)
+    }
+
+
+  })
+} 
 
 
 /********************************************************* */
 exports.buscarUser = async function (req,res) {
     try {
-          /*
-         fuente: https://youtu.be/OEdPH4fV7vY?t=7711
-         busca solo por el nombre
-           */ 
-
-
-        //let usuario= await User.find( {$match : {email: "fer@gmail.com" } } )
-        //let usuario= await User.find( { $text: {$search: req.body.email} } )
-        //let usuario= await User.find( {email:{ $regex: `^${req.body.email}`}})
-        //let usuario= await User.find( {email: "fer@gmail.com" } )
 
         //source https://stackoverflow.com/questions/43779319/mongodb-text-search-exact-match-using-variable
         let usuario= await User.find( {email: `${req.body.email}` } )
@@ -204,30 +291,6 @@ exports.buscarUser = async function (req,res) {
     }
 }
 
-
-// //testeo update password
-
-
-
-// // @desc    Update user
-// // @route   PUT /api/users/:id
-// // @access  Private
-// exports.updateUser3 = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.params.id) //id del usr
-
-
-// // Check for user
-// if (!req.user) {
-//   res.status(401)
-//   throw new Error('User not found')
-// }
-
-//   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true, //si no existe lo crea
-//   })
-
-//   res.status(200).json(updatedUser)
-// })
 
 
 // //-----------
@@ -277,37 +340,6 @@ exports.buscarUser = async function (req,res) {
 
 // })
 
-
-// exports.updateUser2 = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.body.id) //id del usr
-//   console.log(user)
-
-
-
-// // Chequeo user
-// if (user===null) {
-//   res.status(401)
-//   throw new Error('Usr no encontrado')
-// }
-// if (!req.body.password===null)
-// //en caso de aplicarse, hago que el password lo guarde con hash
-// {
-//     var hashedPassword = bcrypt.hashSync(user.password, 8);
-//     //user.telefono=req.body.telefono
-//     //req.body.telefono
-//     req.body.password= hashedPassword
-//     const updatedUser = await User.findByIdAndUpdate(req.body.id, req.body.password, {
-//     new: true, //si no existe lo crea
-//   })
-// }
-// else
-//     //console.log("el email no se cambia")
-//     {
-//         res.status(400)
-//         throw new Error('Datos de usuario inválidos')
-//       }   
-//   //res.status(200).json(updatedUser)
-// })
 
 
 

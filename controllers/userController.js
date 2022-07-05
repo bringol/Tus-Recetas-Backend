@@ -81,6 +81,31 @@ exports.editarPassword = async function (req, res, next) {
     }
 }
 
+exports.recuperacion = async function (req, res, next) {
+
+    if (!req.body.email) {
+        return res.status(400).json({status: 400., message: "Email be present"})
+    }
+
+    var User = {
+        email: req.body.email
+    }
+    try {
+        // var nuevaPass = await userService.editarPassword(User)
+        // await userService.envioMail(nuevaPass,req.body.email)
+        var envio = await userService.olvidoPassword(User)
+        return res.status(200).json({
+            status: 200,
+            data: envio, 
+            message: "Envio Exitoso"})
+        
+
+
+    } catch (e) {
+        return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
 
 
 exports.loginUser = async function(req, res, next) {
@@ -103,10 +128,62 @@ exports.loginUser = async function(req, res, next) {
 }
 
 exports.getUserByToken = async (req, res) => {
-    res.status(200).json(req.user)
+    
+    try{
+    res.status(200).json(req.user.email)
+    }
+    catch(e){
+        return res.status(400).json({status: 400., message: "e.message"})
+    }
+
   }
 
   exports.getUserByEmail = async (req, res) => {
     const {email}=await User.findById(req.user.email)
-    res.status(200).json(req.user)
+    res.status(200).json(req.user.email)
   }
+
+  exports.resetPasswordTEST = async (req, res) => {
+    const usuario= await userService.getMe(req,res)
+    if (usuario.message=="Not authorized" || usuario.message ==="Not authorized, no token")
+        console.log("test no autorizado")
+    else
+    console.log("tranqui")
+
+  }
+
+// //   exports.getUserByToken = async (req, res) => {
+// //     var User = {
+// //         resetToken: req.body.resetToken
+// //     }
+// //     try{
+// //         const busqueda = await userService.buscarUser(User)
+// //         return res.status(201).json({ busqueda, message: "Login Exitoso" })
+
+// //     }
+// //     catch{
+
+// //     }
+    
+//   }
+  exports.resetPassword = async function (req, res, next) {
+
+    if (!req.body.resetToken) {
+        return res.status(400).json({status: 400., message: "Email be present"})
+    }
+
+    var User = {
+        password: req.body.password ? req.body.password : null,
+        resetToken: req.body.resetToken
+    }
+
+    try {
+        var userActualizado = await userService.editarPassword(User)
+        return res.status(200).json({
+            status: 200,
+            data: userActualizado, 
+            message: "Succesfully Updated User"})
+    } catch (e) {
+        return res.status(400).json({status: 400., message: e.message})
+    }
+}
