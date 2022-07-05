@@ -115,8 +115,9 @@ exports.olvidoPassword = async function (req, res, next) {
         email: req.body.email
     }
     try {
-        var envio = await userService.olvidoPassword(User,res)
-        return envio
+        await userService.olvidoPassword(User,res)
+        //return envio
+        return res.status(200).json({status: 200, message: "Correo enviado"})
         
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message})

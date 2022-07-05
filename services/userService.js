@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const nodemailer=require("nodemailer")
+//const crypto = require('crypto');
 
 
 // @desc    Registrar usr nuevo
@@ -167,47 +168,60 @@ exports.editarPassword = async function (usuario) {
 // @desc    Envio de email con link de reinicio de contraseña y seteo de parámetros
 // @route   PUT /api/users/olvido
 // @access  Public
-exports.olvidoPassword= async function (usuario,res) {
+exports.olvidoPassword= async function (usuario) {
   //source https://www.youtube.com/watch?v=NOuiitBbAcU
-    const email=usuario.email
-    User.findOne({email})
-    .then(user=>{
-        if(!user){
-            return res.status(400).json({error:"No existe un usuario con ese email"})
-        }
+    var email=usuario.email
+    console.log(usuario.email)
+    try{
+      var user = await User.findOne({email})    
+    } catch (e) {
+      throw Error(e);
+    } 
+    if(!user){
+      throw Error("No existe un usuario con ese email");
+    }
+        console.log("mje")
         const token=jwt.sign({_id: user._id}, process.env.RESET_PASS_KEY)
         user.resetToken = token
         user.expireToken = Date.now() + 360000
-        user.save().then(()=>{
-            //parámetros nodemailer
-            const transporter = nodemailer.createTransport({
-              service:"Gmail",
-              auth:{
-                user:`${process.env.NODEMAILER_USER}`,
-                pass:`${process.env.NODEMAILER_PASS}`,
-              },
-            });
-            //conenido del mail
-            const mailOptions={
+        try {
+          //console.log("mje")
+          user.save()
+          const transporter = nodemailer.createTransport({
+            service:"Gmail",
+            auth:{
+              user:`${process.env.NODEMAILER_USER}`,
+              pass:`${process.env.NODEMAILER_PASS}`,
+            },
+          });
+        //contenido del mail
+          const mailOptions={
             from:`${process.env.NODEMAILER_USER}`,
             to:`${email}`,
             subject: "Tus-Recetas: Olvido de Contraseña ",
-            html: `<h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
-                   <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
-                   <h3>${process.env.URL_FRONT}/reset/${token}</h3>
+            html: `
+                  <h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
+                  <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
+                  <h3>${process.env.URL_FRONT}/reset/${token}</h3>
                   `   
+          }
+          //enviamos el mail
+          transporter.sendMail(mailOptions,(error, info)=>{
+            if(error){
+              //res.status(401).send(error.message)
+              throw Error(error);
+            }else{
+              console.log("Email enviado exitosamente a: "+`${email}`)
+              //res.status(200).json("Email enviado exitosamente a: "+`${email}`)
+              //return("Email enviado exitosamente a: "+`${email}`)
+              //return(email)
             }
-            transporter.sendMail(mailOptions,(error)=>{
-              if(error){
-                res.status(400).send(error.message)
-              }else{
-                res.status(200).json("Email enviado exitosamente a: "+`${email}`)
-              }
-            })
-        })
-  
-    })
-  
+        
+          })
+        }
+        catch (e) {
+          throw Error(e)
+      }
   }
 
 
@@ -236,8 +250,11 @@ exports.reinicioPassword = async function (dato,res) {
     })
   }
 
+
+
 //******************************** */
-exports.envioMail = async function(email){
+exports.envioMail = async function(email,token){
+   //parámetros nodemailer
   const transporter = nodemailer.createTransport({
     service:"Gmail",
     auth:{
@@ -245,27 +262,27 @@ exports.envioMail = async function(email){
       pass:`${process.env.NODEMAILER_PASS}`,
     },
   });
-
+//contenido del mail
   const mailOptions={
     from:`${process.env.NODEMAILER_USER}`,
     to:`${email}`,
     subject: "Tus-Recetas: Olvido de Contraseña ",
-    //text:"Tu nueva constraseña es: "+`${password}`,
-    text:
-    "Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.\n\n"
-    + "Por favor, seleccione el siguiente enlace, o cópielo en un navegador para completar el proceso a la hora de haberlo recibido:\n\n"
-    + `http://localhost:3000/reset/${token}\n\n`
-    +"Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.\n"
+    html: `
+          <h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
+          <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
+          <h3>${process.env.URL_FRONT}/reset/${token}</h3>
+          `   
   }
   //enviamos el mail
   transporter.sendMail(mailOptions,(error, info)=>{
     if(error){
-      res.status(401).send(error.message)
+      //res.status(401).send(error.message)
+      throw Error(error);
     }else{
       console.log("mail enviado")
-      res.status(200).json(req.body)
+      //res.status(200).json("Email enviado exitosamente a: "+`${email}`)
+      return(("Email enviado exitosamente a: "+`${email}`))
     }
-
 
   })
 } 
