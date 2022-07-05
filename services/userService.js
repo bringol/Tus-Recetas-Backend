@@ -163,77 +163,80 @@ exports.editarPassword = async function (usuario) {
 }
 
 
-exports.olvidoPassword= async function (req,res) {
-//source https://www.youtube.com/watch?v=NOuiitBbAcU
-  const email=req.body.email
-  User.findOne({email})
-  .then(user=>{
-      if(!user){
-          return res.status(422).json({error:"User dont exists with that email"})
-      }
-      const token=jwt.sign({_id: user._id}, process.env.RESET_PASS_KEY)
-      user.resetToken = token
-      user.expireToken = Date.now() + 360000
-      user.save().then((result)=>{
-          //parámetros nodemailer
-          const transporter = nodemailer.createTransport({
-            service:"Gmail",
-            auth:{
-              user:`${process.env.NODEMAILER_USER}`,
-              pass:`${process.env.NODEMAILER_PASS}`,
-            },
-          });
-          //conenido del mail
-          const mailOptions={
-          from:`${process.env.NODEMAILER_USER}`,
-          to:`${email}`,
-          subject: "Tus-Recetas: Olvido de Contraseña ",
-          html: `<h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
-                 <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
-                 <h3>${process.env.URL_FRONT}/reset/${token}</h3>
-                `   
-          }
-          transporter.sendMail(mailOptions,(error, info)=>{
-            if(error){
-              //res.status(401).send(error.message)
-              throw Error(error.message)
-            }else{
-              //console.log("mail enviado exitosamente")
-              //return(token)
-              res.status(200).json("mail enviado exitosamente a: "+`${email}`)
-            }
-          })
-      })
 
-  })
-
-}
-
-exports.reinicioPassword = async function (req,res) {
-  //fuente https://www.youtube.com/watch?v=MfqyFcP6hTY&list=PLB97yPrFwo5g0FQr4rqImKa55F_aPiQWk&index=50&t=294s
-    const newPassword = req.body.password
-    const sentToken = req.body.token
-    User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+// @desc    Envio de email con link de reinicio de contraseña y seteo de parámetros
+// @route   PUT /api/users/olvido
+// @access  Public
+exports.olvidoPassword= async function (usuario,res) {
+  //source https://www.youtube.com/watch?v=NOuiitBbAcU
+    const email=usuario.email
+    User.findOne({email})
     .then(user=>{
         if(!user){
-            return res.status(422).json({error:"Try again session expired"})
+            return res.status(400).json({error:"No existe un usuario con ese email"})
         }
-        bcrypt.hash(newPassword,10).then(hashedpassword=>{
-           user.password = hashedpassword
-           user.resetToken = undefined
-           user.expireToken = undefined
-           user.save().then(()=>{
-               res.json({message:"password update success"})
-           })
+        const token=jwt.sign({_id: user._id}, process.env.RESET_PASS_KEY)
+        user.resetToken = token
+        user.expireToken = Date.now() + 360000
+        user.save().then(()=>{
+            //parámetros nodemailer
+            const transporter = nodemailer.createTransport({
+              service:"Gmail",
+              auth:{
+                user:`${process.env.NODEMAILER_USER}`,
+                pass:`${process.env.NODEMAILER_PASS}`,
+              },
+            });
+            //conenido del mail
+            const mailOptions={
+            from:`${process.env.NODEMAILER_USER}`,
+            to:`${email}`,
+            subject: "Tus-Recetas: Olvido de Contraseña ",
+            html: `<h2>Está recibiendo esto porque Ud. (o alguien más) pidió un cambio de contraseña para esta cuenta.</h2><br>
+                   <h2>Si Ud. no pidió un cambio de contraseña, por favor ignore el email y su contraseña no cambiará.<h2><br>
+                   <h3>${process.env.URL_FRONT}/reset/${token}</h3>
+                  `   
+            }
+            transporter.sendMail(mailOptions,(error)=>{
+              if(error){
+                res.status(400).send(error.message)
+              }else{
+                res.status(200).json("Email enviado exitosamente a: "+`${email}`)
+              }
+            })
         })
-    }).catch(err=>{
-        console.log(err)
+  
     })
-}
+  
+  }
 
 
+// @desc    Cambio de contraseña y seteo de parámetros de reinicio
+// @route   PUT /api/users/reinicio
+// @access  Private
+exports.reinicioPassword = async function (dato,res) {
+  //fuente https://www.youtube.com/watch?v=MfqyFcP6hTY&list=PLB97yPrFwo5g0FQr4rqImKa55F_aPiQWk&index=50&t=294s
+    const newPassword = dato.password
+    const sentToken = dato.token
+    User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+      .then(user=>{
+          if(!user){
+              return res.status(400).json({error:"Reinicio expirado"})
+          }
+          bcrypt.hash(newPassword,10).then(hashedpassword=>{
+             user.password = hashedpassword
+             user.resetToken = undefined
+             user.expireToken = undefined
+             user.save().then(()=>{
+                 res.status(200).json({message:"Contraseña modificada exitosamente"})
+             })
+          })
+      }).catch(err=>{
+          console.log(err)
+    })
+  }
 
-
+//******************************** */
 exports.envioMail = async function(email){
   const transporter = nodemailer.createTransport({
     service:"Gmail",

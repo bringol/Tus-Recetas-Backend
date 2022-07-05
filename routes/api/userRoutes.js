@@ -4,7 +4,7 @@ const userController = require('../../controllers/userController')
 const { protect } = require('../../middleware/authMiddleware')
 
 //test
-const userService = require('../../services/userService');
+//const userService = require('../../services/userService');
 
 router.post('/', userController.createUser)
 router.post('/login', userController.loginUser)
@@ -12,12 +12,13 @@ router.get('/me', protect, userController.getUserByToken)
 router.post('/email', protect, userController.getUserByEmail)
 router.put('/editar/perfil',protect, userController.editarUser)//datos personales
 router.put('/editar/password',protect, userController.editarPassword)
-
+router.post('/olvido', userController.olvidoPassword)
+router.post('/reinicio', userController.reinicioPassword)
 
 //mail
 //router.post('/reset', userService.RecuperacionTEST)
-router.post('/olvido', userService.olvidoPassword)
-router.post('/reset', userService.reinicioPassword)
+// router.post('/olvido', userService.olvidoPassword)
+// router.post('/reset', userService.reinicioPassword)
 
 
 //router.post('/recupero3', userService.olvidoPassword)
