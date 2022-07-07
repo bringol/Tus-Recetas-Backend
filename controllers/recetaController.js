@@ -8,7 +8,7 @@ _this = this;
 
 exports.obtenerRecetas = async function (req, res, next) {
 
-    var page = req.query.page ? req.query.page : 1
+    var page = req.query.page ? req.query.page : 1;
     var limit = req.query.limit ? req.query.limit : 8;
 
         try {
@@ -32,7 +32,9 @@ exports.crearReceta = async function (req, res, next) {
         autor: req.body.autor
     }
     try {
-        var recetaCreada = await recetaService.crearReceta(Receta)
+        if (req.body.nombreImagen!==''){ //Si tengo la imagen, creo la receta
+            var recetaCreada = await recetaService.crearReceta(Receta)
+        }
         return res.status(201).json({recetaCreada, message: "Succesfully Created Receta"})
     } catch (e) {
         console.log(e)
@@ -42,11 +44,12 @@ exports.crearReceta = async function (req, res, next) {
 
 exports.editarReceta = async function (req, res, next) {
 
-    if (!req.body.name) {
-        return res.status(400).json({status: 400., message: "Name be present"})
+    if (!req.body.id) {
+        return res.status(400).json({status: 400., message: "Id be present"})
     }
 
     var Receta = {
+        id: req.body.id ? req.body.id : null,
         name: req.body.name ? req.body.name : null,
         categoria: req.body.categoria ? req.body.categoria : null,
         dificultad: req.body.dificultad ? req.body.dificultad : null,
@@ -155,9 +158,6 @@ exports.calificarReceta = async function (req, res, next) {
 
 // })
 // }
-
-
-
 
 exports.buscarReceta = async function (req, res, next) {
     try {

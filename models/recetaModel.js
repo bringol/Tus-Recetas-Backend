@@ -13,8 +13,7 @@ const recetaSchema = mongoose.Schema(
     usuariosTotales: Number,
     date: Date,
     autor: String,
-    //imagen
-
+    nombreImagen: String, //URL Imagen
   }, {versionKey: false}
 )
 

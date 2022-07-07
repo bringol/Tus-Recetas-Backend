@@ -2,8 +2,14 @@ var Receta = require('../models/recetaModel');
 const mongoose = require('mongoose');
 const Calificacion = require('../models/calificacionModel');
 
-
 _this = this
+
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+    cloud_name: 'dra23scwx', 
+    api_key: '217332742699955', 
+    api_secret: 'oY0LvAvHMUm-HUhtkPj6wqvKgPE'
+});
 
 exports.obtenerRecetas = async function (query, page, limit) {
 
@@ -24,31 +30,42 @@ exports.obtenerRecetas = async function (query, page, limit) {
 }
 
 exports.crearReceta = async function (receta) {
-    
-    var newReceta = new Receta({
-        name: receta.name,
-        categoria: receta.categoria,
-        dificultad: receta.dificultad,
-        ingredientes: receta.ingredientes,
-        procedimiento: receta.procedimiento,
-        calificacionPromedio: 0,
-        calificacionTotal: 0,
-        usuariosTotales: 0,
-        date: new Date(),
-        autor: receta.autor,
-    })
 
+    console.log("Receta",receta);
+    let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
+    cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
+        console.log("Resultado",result);
+        var newReceta = new Receta({ //creo receta
+            name: receta.name,
+            categoria: receta.categoria,
+            dificultad: receta.dificultad,
+            ingredientes: receta.ingredientes,
+            procedimiento: receta.procedimiento,
+            calificacionPromedio: 0,
+            calificacionTotal: 0,
+            usuariosTotales: 0,
+            date: new Date(),
+            autor: receta.autor,
+            nombreImagen: result.url //URL de la imagen
+            
+        })
+        guardarReceta(newReceta)
+    });
+}
+
+async function guardarReceta (newReceta){ //guardo receta en Mongo
     try {
-        await newReceta.save();
+        var recetaGuardada = await newReceta.save();
+        return recetaGuardada;
     } catch (e) {
-        console.log(e)    
-        throw Error("Error while Creating Receta")
-    }
+    console.log(e)    
+    throw Error("Error while Creating Imagen User")
+}
 }
 
 exports.editarReceta = async function (receta) {
     
-    var id = {name: receta.name}
+    var id = {id: receta.id}
 
     try {
         var recetaAnterior = await Receta.findOne(id);
