@@ -19,6 +19,19 @@ exports.obtenerRecetas = async function (req, res, next) {
     }
 }
 
+exports.obtenerRecetaID = async function (req, res, next) {
+
+    var page = req.query.page ? req.query.page : 1
+    var limit = req.query.limit ? req.query.limit : 8;
+    let filtro= {_id: req.params.id}
+    try {
+        var Producto = await recetaService.obtenerRecetas(filtro, page, limit)
+        return res.status(201).json({status: 201, data: Producto, message: "Succesfully Recieved Receta"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 
 exports.crearReceta = async function (req, res, next) {
 
