@@ -26,7 +26,7 @@ exports.obtenerRecetaID = async function (req, res, next) {
     let filtro= {_id: req.params.id}
     try {
         var Producto = await recetaService.obtenerRecetas(filtro, page, limit)
-        return res.status(201).json({status: 201, data: Producto, message: "Succesfully Recieved Receta"});
+        return res.status(200).json({status: 200, data: Producto, message: "Succesfully Recieved Receta"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }

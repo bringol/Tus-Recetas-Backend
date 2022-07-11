@@ -10,6 +10,8 @@ router.post('/editar-receta/', recetaController.editarReceta)
 router.delete('/eliminar-receta/', recetaController.eliminarReceta)
 router.post('/buscar/', recetaController.buscarReceta)
 router.get('/:id', recetaController.obtenerRecetaID)
+router.get('/auth/:id',protect, recetaController.obtenerRecetaID)
+
 //router.post('/filtro/', recetaController.RecetaByFiltro)
 router.post('/calificar-receta/', recetaController.calificarReceta)
 //router.get('/find/', recetaController.buscarRecetaFiltro2)
