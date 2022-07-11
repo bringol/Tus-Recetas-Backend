@@ -3,10 +3,10 @@ var mongoosePaginate = require('mongoose-paginate')
 
 const recetaSchema = mongoose.Schema(
   {
-    name: String,
+    nombre: String,
     categoria: String,
     dificultad: String,
-    ingredientes: Array,
+    ingredientes: String,
     procedimiento: String, 
     calificacionPromedio: Number,
     calificacionTotal: Number,
@@ -18,11 +18,11 @@ const recetaSchema = mongoose.Schema(
 )
 
 //hace falta crear un index para poder realizar la busq
-recetaSchema.index({name:"text"})//en este caso es solo para el nombre
+recetaSchema.index({nombre:"text"})//en este caso es solo para el nombre
 //agrego los otros campos por separado para la parte de filtros EDIT: al parecer solo puede haber 1 index
 //Index con todos los filtros (testear)
 // recetaSchema.index({
-//   name:"text",
+//   nombre:"text",
 //   //ingredientes:"array",
 //   categoria:"text" ,
 //   dificultad:"text"})
