@@ -42,7 +42,9 @@ exports.crearReceta = async function (req, res, next) {
         dificultad: req.body.dificultad,
         ingredientes: req.body.ingredientes,
         procedimiento: req.body.procedimiento,
-        autor: req.body.autor
+        email: req.body.email,
+        autor: req.body.autor,
+        nombreImagen: req.body.nombreImagen
     }
     try {
         if (req.body.nombreImagen!==''){ //Si tengo la imagen, creo la receta
