@@ -34,7 +34,8 @@ exports.obtenerRecetas = async function (query, page, limit) {
 
 exports.crearReceta = async function (receta) {
 
-    console.log("receta", receta)
+    console.log("receta servicio", receta)
+    console.log("NOMBRE DE LA IMAGEN", receta.nombreImagen)
     let urlImagen;
     let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
     cloudinary.uploader.upload(imagen, function (result) { //guardo receta en Cloudinary

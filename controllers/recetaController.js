@@ -21,7 +21,7 @@ exports.obtenerRecetas = async function (req, res, next) {
 
 exports.crearReceta = async function (req, res, next) {
 
-    console.log("llegue al controller", req.body)
+    console.log("llegue al controller", req.body);
 
     var Receta = {
         nombre: req.body.nombre,
@@ -32,11 +32,12 @@ exports.crearReceta = async function (req, res, next) {
         autor: req.body.autor,
         nombreImagen: req.body.nombreImagen,
     }
+
     try {
-        if (nombreImagen !== '') { //Si tengo la imagen, creo la receta
+       
             var recetaCreada = await recetaService.crearReceta(Receta)
             return res.status(201).json({ recetaCreada, message: "Succesfully Created Receta" })
-        }
+        
     }
     catch (e) {
             console.log(e)
