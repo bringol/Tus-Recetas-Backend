@@ -174,12 +174,13 @@ exports.crearCalificacion = async function (calificacion) {
 exports.actualizarPromedio = async function (idReceta, calificacion) {
     
     console.log("entra al service promedio")
-    var id = {idReceta}
+    var id = {_id: idReceta}
 
     calificacion = +`${calificacion}`
 
     try {
         var recetaAnterior = await Receta.findOne(id);
+
         const suma = recetaAnterior.calificacionTotal + calificacion
         const cont = recetaAnterior.usuariosTotales + 1
         console.log("calif total", recetaAnterior.calificacionTotal)
