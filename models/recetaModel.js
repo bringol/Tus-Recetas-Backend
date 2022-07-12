@@ -3,7 +3,7 @@ var mongoosePaginate = require('mongoose-paginate')
 
 const recetaSchema = mongoose.Schema(
   {
-    name: String,
+    nombre: String,
     categoria: String,
     dificultad: String,
     ingredientes: String,
@@ -13,7 +13,7 @@ const recetaSchema = mongoose.Schema(
     usuariosTotales: Number,
     date: Date,
     autor: String,
-    correo: String, //para el listado de recetas publicadas
+    email: String, //para el listado de recetas publicadas
     nombreImagen: String, //URL Imagen
   }, {versionKey: false}
 )

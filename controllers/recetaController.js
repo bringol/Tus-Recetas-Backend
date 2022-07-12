@@ -35,9 +35,9 @@ exports.obtenerRecetaID = async function (req, res, next) {
 
 exports.crearReceta = async function (req, res, next) {
 
-    console.log("llegue al controller",req.body)
+    //console.log("llegue al controller",req.body)
     var Receta = {
-        name: req.body.name,
+        nombre: req.body.nombre,
         categoria: req.body.categoria,
         dificultad: req.body.dificultad,
         ingredientes: req.body.ingredientes,

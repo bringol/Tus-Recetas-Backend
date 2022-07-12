@@ -31,12 +31,12 @@ exports.obtenerRecetas = async function (query, page, limit) {
 
 exports.crearReceta = async function (receta) {
 
-    console.log("Receta",receta);
-    let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
-    cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
+    console.log("Receta a Agregar",receta);
+    //let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
+    //cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
         //console.log("Resultado",result);
         var newReceta = new Receta({ //creo receta
-            name: receta.name,
+            nombre: receta.nombre,
             categoria: receta.categoria,
             dificultad: receta.dificultad,
             ingredientes: receta.ingredientes,
@@ -45,13 +45,17 @@ exports.crearReceta = async function (receta) {
             calificacionTotal: 0,
             usuariosTotales: 0,
             date: new Date(),
+            email: receta.email,
             autor: receta.autor,
-            nombreImagen: receta.nombreImagen, //URL de la imagen
-            email:receta.email,
+            nombreImagen: receta.nombreImagen, //URL de la imagen            
             
         })
-        guardarReceta(newReceta)
-    });
+        try {
+            await newReceta.save();
+        } catch (e) {
+            console.log(e)    
+            throw Error("Error while Creating Receta")
+        }
 }
 
 async function guardarReceta (newReceta){ //guardo receta en Mongo
