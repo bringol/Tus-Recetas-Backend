@@ -11,6 +11,7 @@ router.delete('/eliminar-receta/', recetaController.eliminarReceta)
 router.post('/buscar/', recetaController.buscarReceta)
 router.get('/:id', recetaController.obtenerRecetaID)
 router.get('/auth/:id',protect, recetaController.obtenerRecetaID)
+router.post('/user/misrecetas/',protect, recetaController.obtenerRecetaMail)
 
 router.post('/calificar-receta/', recetaController.calificarReceta)
 //router.get('/find/', recetaController.buscarRecetaFiltro2)

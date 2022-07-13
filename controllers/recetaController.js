@@ -32,6 +32,19 @@ exports.obtenerRecetaID = async function (req, res, next) {
     }
 }
 
+exports.obtenerRecetaMail = async function (req, res, next) {
+
+    var page = req.query.page ? req.query.page : 1
+    var limit = req.query.limit ? req.query.limit : 8;
+    let filtro= {email: req.body.email}
+    try {
+        var Producto = await recetaService.obtenerRecetas(filtro, page, limit)
+        return res.status(200).json({status: 200, data: Producto, message: "Succesfully Recieved Receta"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 
 exports.crearReceta = async function (req, res, next) {
 
@@ -150,29 +163,6 @@ exports.calificarReceta = async function (req, res, next) {
 }
 
 
-
-// testing
-// exports.buscarRecetaFiltro2 = async function (req, res, next) {
-
-//     Receta.find( {
-//         categoria:{ $regex: /pastas/, $options: 'i'},
-//         name:{ $regex: /sorrentinos/, $options: 'i'},
-//         dificultad:{ $regex: /4/, $options: 'i'},
-//         ingredientes:{$regex: /harina/, $options: 'i'}
-    
-//     },function(err, result){
-
-//         if(err){
-//             res.send(err)
-//         }
-//         else{
-//             res.json(result)
-//         }
-
-
-
-// })
-// }
 
 exports.buscarReceta = async function (req, res, next) {
     try {
