@@ -52,6 +52,7 @@ exports.crearReceta = async function (receta) {
         })
         try {
             await newReceta.save();
+            return newReceta
         } catch (e) {
             console.log(e)    
             throw Error("Error while Creating Receta")
