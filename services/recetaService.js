@@ -31,12 +31,12 @@ exports.obtenerRecetas = async function (query, page, limit) {
 
 exports.crearReceta = async function (receta) {
 
-    console.log("Receta",receta);
-    let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
-    cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
-        console.log("Resultado",result);
+    console.log("Receta a Agregar",receta);
+    //let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
+    //cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
+        //console.log("Resultado",result);
         var newReceta = new Receta({ //creo receta
-            name: receta.name,
+            nombre: receta.nombre,
             categoria: receta.categoria,
             dificultad: receta.dificultad,
             ingredientes: receta.ingredientes,
@@ -45,12 +45,18 @@ exports.crearReceta = async function (receta) {
             calificacionTotal: 0,
             usuariosTotales: 0,
             date: new Date(),
+            email: receta.email,
             autor: receta.autor,
-            nombreImagen: result.url //URL de la imagen
+            nombreImagen: receta.nombreImagen, //URL de la imagen            
             
         })
-        guardarReceta(newReceta)
-    });
+        try {
+            await newReceta.save();
+            return newReceta
+        } catch (e) {
+            console.log(e)    
+            throw Error("Error while Creating Receta")
+        }
 }
 
 async function guardarReceta (newReceta){ //guardo receta en Mongo
@@ -91,7 +97,6 @@ exports.editarReceta = async function (receta) {
     if(receta.procedimiento!==null)
         recetaAnterior.procedimiento = receta.procedimiento
     
-
     try {
         var recetaGuardada = await recetaAnterior.save()
         return recetaGuardada;
@@ -157,7 +162,7 @@ exports.crearCalificacion = async function (calificacion) {
     var newCalificacion = new Calificacion({
         idReceta: calificacion.idReceta,
         calificacion: calificacion.calificacion,
-        autor: calificacion.autor,
+        email: calificacion.email,
         date: new Date(),
     })
     console.log("new calificacion", newCalificacion)
@@ -213,11 +218,8 @@ exports.buscarReceta = async function (req) {
         name:{ $regex: req.body.name, $options: 'i'},
         categoria:{ $regex: req.body.categoria, $options: 'i'},
         dificultad:{ $regex: req.body.dificultad, $options: 'i'},
-        //ingredientes:{$regex: /harina/, $options: 'i'}
-        //ingredientes:{$regex: req.body.ingredientes, $options: 'i'}
-        //ingredientes:{$in: ["agua","ricota"]}
-        ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
-        //mayusc, minsusc y diacriticos para ingredientes?
+        //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
+        ingredientes:{ $regex: req.body.ingredientes, $options: 'i'},
         })
         //revisar manejador de errores caso datos invalidos
         return(receta)

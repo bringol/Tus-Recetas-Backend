@@ -35,14 +35,16 @@ exports.obtenerRecetaID = async function (req, res, next) {
 
 exports.crearReceta = async function (req, res, next) {
 
-    console.log("llegue al controller",req.body)
+    //console.log("llegue al controller",req.body)
     var Receta = {
-        name: req.body.name,
+        nombre: req.body.nombre,
         categoria: req.body.categoria,
         dificultad: req.body.dificultad,
         ingredientes: req.body.ingredientes,
         procedimiento: req.body.procedimiento,
-        autor: req.body.autor
+        email: req.body.email,
+        autor: req.body.autor,
+        nombreImagen: req.body.nombreImagen
     }
     try {
         if (req.body.nombreImagen!==''){ //Si tengo la imagen, creo la receta
