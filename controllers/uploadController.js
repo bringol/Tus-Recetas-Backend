@@ -4,7 +4,7 @@ var fs = require('fs');
 var fs = bluebird.promisifyAll(require('fs'))
 var {join} = require('path');
 
-//SUBIR IMAGEN A CLOUDINARY
+//SUBIR IMAGEN A SERVIDOR LOCAL
 
 async function checkCreateUploadsFolder (uploadsFolder) {
     try 

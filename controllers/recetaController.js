@@ -1,6 +1,6 @@
 var recetaService = require('../services/recetaService');
 
-//test
+// test
 // var Receta = require('../models/recetaModel');
 // const mongoose = require('mongoose');
 
@@ -45,10 +45,9 @@ exports.obtenerRecetaMail = async function (req, res, next) {
     }
 }
 
-
 exports.crearReceta = async function (req, res, next) {
 
-    //console.log("llegue al controller",req.body)
+    console.log("llegue al controller",req.body)
     var Receta = {
         nombre: req.body.nombre,
         categoria: req.body.categoria,
@@ -60,9 +59,7 @@ exports.crearReceta = async function (req, res, next) {
         nombreImagen: req.body.nombreImagen
     }
     try {
-        if (req.body.nombreImagen!==''){ //Si tengo la imagen, creo la receta
             var recetaCreada = await recetaService.crearReceta(Receta)
-        }
         return res.status(201).json({recetaCreada, message: "Succesfully Created Receta"})
     } catch (e) {
         console.log(e)
@@ -137,9 +134,6 @@ exports.eliminarReceta = async function (req, res, next) {
 // }
 
 
-
-//VER
-
 exports.calificarReceta = async function (req, res, next) {
 
     /*if (!req.body.name) {
@@ -161,8 +155,6 @@ exports.calificarReceta = async function (req, res, next) {
         return res.status(400).json({status: 400., message: e.message})
     }
 }
-
-
 
 exports.buscarReceta = async function (req, res, next) {
     try {

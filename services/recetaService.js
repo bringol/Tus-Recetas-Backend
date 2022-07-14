@@ -5,9 +5,9 @@ const Calificacion = require('../models/calificacionModel');
 _this = this
 
 var cloudinary = require('cloudinary');
-cloudinary.config({ 
-    cloud_name: 'dra23scwx', 
-    api_key: '217332742699955', 
+cloudinary.config({
+    cloud_name: 'dra23scwx',
+    api_key: '217332742699955',
     api_secret: 'oY0LvAvHMUm-HUhtkPj6wqvKgPE'
 });
 
@@ -19,22 +19,22 @@ exports.obtenerRecetas = async function (query, page, limit) {
     }
 
     try {
-        console.log("Query",query)
+        console.log("Query", query)
         var Recetas = await Receta.paginate(query, options)
         return Recetas;
 
-    } catch (e) { 
-        console.log("error services",e)
+    } catch (e) {
+        console.log("error services", e)
         throw Error('Error while Paginating Recetas');
     }
 }
 
 exports.crearReceta = async function (receta) {
 
-    console.log("Receta a Agregar",receta);
-    //let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
-    //cloudinary.uploader.upload(imagen, function(result) {  //subo imagen a cloudinary
-        //console.log("Resultado",result);
+    console.log("Receta a Agregar", receta);
+    let imagen = process.env.UPLOAD_DIR + receta.nombreImagen;
+    cloudinary.uploader.upload(imagen, function (result) {  //subo imagen a cloudinary
+        console.log("Resultado", result);
         var newReceta = new Receta({ //creo receta
             nombre: receta.nombre,
             categoria: receta.categoria,
@@ -48,30 +48,25 @@ exports.crearReceta = async function (receta) {
             email: receta.email,
             autor: receta.autor,
             nombreImagen: receta.nombreImagen, //URL de la imagen            
-            
+
         })
-        try {
-            await newReceta.save();
-            return newReceta
-        } catch (e) {
-            console.log(e)    
-            throw Error("Error while Creating Receta")
-        }
+        guardarReceta(newReceta)
+    });
 }
 
-async function guardarReceta (newReceta){ //guardo receta en Mongo
+async function guardarReceta(newReceta) { //guardo receta en Mongo
     try {
         var recetaGuardada = await newReceta.save();
         return recetaGuardada;
     } catch (e) {
-    console.log(e)    
-    throw Error("Error while Creating Imagen User")
-}
+        console.log(e)
+        throw Error("Error while Creating Imagen User")
+    }
 }
 
 exports.editarReceta = async function (receta) {
-    
-    var id = {id: receta.id}
+
+    var id = { id: receta.id }
 
     try {
         var recetaAnterior = await Receta.findOne(id);
@@ -79,24 +74,24 @@ exports.editarReceta = async function (receta) {
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
-    if (!recetaAnterior) 
+    if (!recetaAnterior)
         return false;
-    
-    if(receta.name !==null)
+
+    if (receta.name !== null)
         recetaAnterior.name = receta.name
 
-    if(receta.categoria!==null)
+    if (receta.categoria !== null)
         recetaAnterior.categoria = receta.categoria
 
-    if(receta.dificultad!==null)
+    if (receta.dificultad !== null)
         recetaAnterior.dificultad = receta.dificultad
 
-    if(receta.ingredientes!==null)
+    if (receta.ingredientes !== null)
         recetaAnterior.ingredientes = receta.ingredientes
 
-    if(receta.procedimiento!==null)
+    if (receta.procedimiento !== null)
         recetaAnterior.procedimiento = receta.procedimiento
-    
+
     try {
         var recetaGuardada = await recetaAnterior.save()
         return recetaGuardada;
@@ -124,7 +119,7 @@ exports.eliminarReceta = async function (id) {
     POST /buscar
     fuente: https://youtu.be/OEdPH4fV7vY?t=7711
     busca solo por el nombre
-*/ 
+*/
 //Deprecated
 // exports.buscarReceta = async function (req, res, next) {
 //     try {
@@ -158,7 +153,7 @@ exports.eliminarReceta = async function (id) {
 exports.crearCalificacion = async function (calificacion) {
 
     console.log("entra al service")
-  
+
     var newCalificacion = new Calificacion({
         idReceta: calificacion.idReceta,
         calificacion: calificacion.calificacion,
@@ -167,19 +162,19 @@ exports.crearCalificacion = async function (calificacion) {
     })
     console.log("new calificacion", newCalificacion)
     try {
-       
+
         await newCalificacion.save();
-        
+
     } catch (e) {
-        console.log(e)    
+        console.log(e)
         throw Error("Error while Creating Receta")
     }
 }
 
 exports.actualizarPromedio = async function (idReceta, calificacion) {
-    
+
     console.log("entra al service promedio")
-    var id = {_id: idReceta}
+    var id = { _id: idReceta }
 
     calificacion = +`${calificacion}`
 
@@ -191,7 +186,7 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
         console.log("calif total", recetaAnterior.calificacionTotal)
         recetaAnterior.calificacionTotal = suma
         recetaAnterior.usuariosTotales = cont
-        recetaAnterior.calificacionPromedio = (suma/cont).toFixed(0)
+        recetaAnterior.calificacionPromedio = (suma / cont).toFixed(0)
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -212,17 +207,17 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 exports.buscarReceta = async function (req) {
 
     try {
-       
-       let receta=await Receta.find( {
-        
-        name:{ $regex: req.body.name, $options: 'i'},
-        categoria:{ $regex: req.body.categoria, $options: 'i'},
-        dificultad:{ $regex: req.body.dificultad, $options: 'i'},
-        //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
-        ingredientes:{ $regex: req.body.ingredientes, $options: 'i'},
+
+        let receta = await Receta.find({
+
+            name: { $regex: req.body.name, $options: 'i' },
+            categoria: { $regex: req.body.categoria, $options: 'i' },
+            dificultad: { $regex: req.body.dificultad, $options: 'i' },
+            //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
+            ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
         })
         //revisar manejador de errores caso datos invalidos
-        return(receta)
+        return (receta)
     } catch (e) {
         return (e)
     }
@@ -231,6 +226,6 @@ exports.buscarReceta = async function (req) {
 
 
 
-        
-        
+
+
 

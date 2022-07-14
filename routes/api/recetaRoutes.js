@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 var recetaController = require('../../controllers/recetaController');
+var uploadController =  require('../../controllers/uploadController');
 const { protect } = require('../../middleware/authMiddleware')
 
 
@@ -16,5 +17,7 @@ router.post('/user/misrecetas/',protect, recetaController.obtenerRecetaMail)
 router.post('/calificar-receta/', recetaController.calificarReceta)
 //router.get('/find/', recetaController.buscarRecetaFiltro2)
 //router.post('/filtro3/', recetaController.buscarRecetaFiltro3)
+
+router.post('/uploadImg/', uploadController.uploadImg)
 
 module.exports = router
