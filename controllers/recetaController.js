@@ -136,6 +136,8 @@ exports.eliminarReceta = async function (req, res, next) {
 
 exports.calificarReceta = async function (req, res, next) {
 
+    console.log("llega al controller del back")
+
     /*if (!req.body.name) {
         return res.status(400).json({status: 400., message: "Name be present"})
     */

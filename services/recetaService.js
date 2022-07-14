@@ -157,7 +157,7 @@ exports.crearCalificacion = async function (calificacion) {
     var newCalificacion = new Calificacion({
         idReceta: calificacion.idReceta,
         calificacion: calificacion.calificacion,
-        email: calificacion.email,
+        autor: calificacion.autor,
         date: new Date(),
     })
     console.log("new calificacion", newCalificacion)
@@ -183,10 +183,11 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 
         const suma = recetaAnterior.calificacionTotal + calificacion
         const cont = recetaAnterior.usuariosTotales + 1
-        console.log("calif total", recetaAnterior.calificacionTotal)
+        
         recetaAnterior.calificacionTotal = suma
         recetaAnterior.usuariosTotales = cont
         recetaAnterior.calificacionPromedio = (suma / cont).toFixed(0)
+
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -195,6 +196,10 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
     }
     try {
         var recetaGuardada = await recetaAnterior.save()
+        console.log("calif actual", calificacion)
+        console.log("calif total", recetaGuardada.calificacionTotal)
+        console.log("cant votos", recetaGuardada.usuariosTotales)
+        console.log("calif prom", recetaGuardada.calificacionPromedio)
         return recetaGuardada;
     } catch (e) {
         throw Error("And Error occured while updating the Receta");
