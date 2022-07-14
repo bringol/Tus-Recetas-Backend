@@ -47,7 +47,7 @@ exports.crearReceta = async function (receta) {
             date: new Date(),
             email: receta.email,
             autor: receta.autor,
-            nombreImagen: receta.nombreImagen, //URL de la imagen            
+            nombreImagen: result.url, //URL de la imagen            
 
         })
         guardarReceta(newReceta)
