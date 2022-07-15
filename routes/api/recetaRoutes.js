@@ -13,11 +13,11 @@ router.post('/buscar/', recetaController.buscarReceta)
 router.get('/:id', recetaController.obtenerRecetaID)
 router.get('/auth/:id',protect, recetaController.obtenerRecetaID)
 router.post('/user/misrecetas/',protect, recetaController.obtenerRecetaMail)
-
 router.post('/calificar-receta/', recetaController.calificarReceta)
+router.post('/uploadImg/', uploadController.uploadImg)
 //router.get('/find/', recetaController.buscarRecetaFiltro2)
 //router.post('/filtro3/', recetaController.buscarRecetaFiltro3)
 
-router.post('/uploadImg/', uploadController.uploadImg)
+
 
 module.exports = router

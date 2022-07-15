@@ -215,11 +215,12 @@ exports.buscarReceta = async function (req) {
 
         let receta = await Receta.find({
 
-            name: { $regex: req.body.name, $options: 'i' },
+            nombre: { $regex: req.body.nombre, $options: 'i' },
             categoria: { $regex: req.body.categoria, $options: 'i' },
             dificultad: { $regex: req.body.dificultad, $options: 'i' },
             //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
+            calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
         //revisar manejador de errores caso datos invalidos
         return (receta)
