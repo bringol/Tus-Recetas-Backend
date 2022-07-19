@@ -66,7 +66,7 @@ async function guardarReceta(newReceta) { //guardo receta en Mongo
 
 exports.editarReceta = async function (receta) {
 
-    var id = { id: receta.id }
+    var id = { _id: receta.id }
 
     try {
         var recetaAnterior = await Receta.findOne(id);
