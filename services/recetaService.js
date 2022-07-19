@@ -70,15 +70,15 @@ exports.editarReceta = async function (receta) {
 
     try {
         var recetaAnterior = await Receta.findOne(id);
-        //similar o equivalente a find({name: receta.name})
+        //similar o equivalente a find({name: receta.name})r
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
     if (!recetaAnterior)
         return false;
 
-    if (receta.name !== null)
-        recetaAnterior.name = receta.name
+    if (receta.nombre !== null)
+        recetaAnterior.nombre = receta.nombre
 
     if (receta.categoria !== null)
         recetaAnterior.categoria = receta.categoria
@@ -102,8 +102,8 @@ exports.editarReceta = async function (receta) {
 
 exports.eliminarReceta = async function (id) {
     try {
-        var deleted = await Receta.deleteOne({
-            _id: mongoose.Types.ObjectId(id)
+        var deleted = await Receta.remove({
+            _id: id
         })
         if (deleted.n === 0 && deleted.ok === 1) {
             throw Error("Receta Could not be deleted")
@@ -222,7 +222,6 @@ exports.buscarReceta = async function (req) {
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
             calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
-        //revisar manejador de errores caso datos invalidos
         return (receta)
     } catch (e) {
         return (e)
