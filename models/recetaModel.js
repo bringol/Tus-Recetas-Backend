@@ -1,8 +1,13 @@
 const mongoose = require('mongoose')
 var mongoosePaginate = require('mongoose-paginate')
 
-const recetaSchema = mongoose.Schema(
+var Schema = mongoose.Schema;
+
+//mongoose.Schema
+const recetaSchema = new Schema(
   {
+    
+    _id: Schema.Types.ObjectId,
     nombre: String,
     categoria: String,
     dificultad: String,

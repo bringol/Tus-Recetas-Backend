@@ -66,7 +66,8 @@ async function guardarReceta(newReceta) { //guardo receta en Mongo
 
 exports.editarReceta = async function (receta) {
 
-    var id = { id: receta.id }
+    var id = { _id: receta._id }
+    console.log(id)
 
     try {
         var recetaAnterior = await Receta.findOne(id);
@@ -77,8 +78,8 @@ exports.editarReceta = async function (receta) {
     if (!recetaAnterior)
         return false;
 
-    if (receta.name !== null)
-        recetaAnterior.name = receta.name
+    if (receta.nombre !== null)
+        recetaAnterior.nombre = receta.nombre
 
     if (receta.categoria !== null)
         recetaAnterior.categoria = receta.categoria
@@ -212,7 +213,7 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 exports.buscarReceta = async function (req) {
 
     try {
-
+console.log(req.body)
         let receta = await Receta.find({
 
             nombre: { $regex: req.body.nombre, $options: 'i' },
@@ -228,6 +229,27 @@ exports.buscarReceta = async function (req) {
         return (e)
     }
 
+}
+
+exports.obtenerRecetasFiltros = async function (query, page, limit) {
+    var options = {
+        page,
+        limit
+    }
+    try {
+        console.log("Query", query)
+        var Recetas = await Receta.find.paginate({query, options,
+            nombre: { $regex: req.body.nombre, $options: 'i' },
+            categoria: { $regex: req.body.categoria, $options: 'i' },
+            dificultad: { $regex: req.body.dificultad, $options: 'i' },
+            ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
+            calificacion: { $regex: req.body.calificacion, $options: 'i' },
+        })
+        return Recetas;
+    } catch (e) {
+        console.log("error services", e)
+        throw Error('Error while Paginating Recetas');
+    }
 }
 
 
