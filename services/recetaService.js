@@ -66,12 +66,16 @@ async function guardarReceta(newReceta) { //guardo receta en Mongo
 
 exports.editarReceta = async function (receta) {
 
+<<<<<<< HEAD
     var id = { _id: receta._id }
     console.log(id)
+=======
+    var id = { _id: receta.id }
+>>>>>>> dfefffc206aa666d66274b8098403fe3f65515c8
 
     try {
         var recetaAnterior = await Receta.findOne(id);
-        //similar o equivalente a find({name: receta.name})
+        //similar o equivalente a find({name: receta.name})r
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -103,8 +107,8 @@ exports.editarReceta = async function (receta) {
 
 exports.eliminarReceta = async function (id) {
     try {
-        var deleted = await Receta.deleteOne({
-            _id: mongoose.Types.ObjectId(id)
+        var deleted = await Receta.remove({
+            _id: id
         })
         if (deleted.n === 0 && deleted.ok === 1) {
             throw Error("Receta Could not be deleted")
@@ -223,7 +227,6 @@ console.log(req.body)
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
             calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
-        //revisar manejador de errores caso datos invalidos
         return (receta)
     } catch (e) {
         return (e)

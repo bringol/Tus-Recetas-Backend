@@ -15,7 +15,7 @@ router.get('/:id', recetaController.obtenerRecetaID)
 
 router.post('/buscar/', recetaController.buscarReceta)
 router.get('/auth/:id',protect, recetaController.obtenerRecetaID)
-router.post('/user/misrecetas/',protect, recetaController.obtenerRecetaMail)
+router.post('/user/misrecetas/', recetaController.obtenerRecetaMail)
 router.post('/calificar-receta/', recetaController.calificarReceta)
 router.post('/uploadImg/', uploadController.uploadImg)
 router.get('/recetas/', recetaController.obtenerRecetasFiltros)

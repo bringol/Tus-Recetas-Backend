@@ -94,7 +94,7 @@ exports.eliminarReceta = async function (req, res, next) {
     var id = req.body.id;
     try {
         var deleted = await recetaService.eliminarReceta(id);
-        return res.status(201).json({status: 201, data: id, message: "Succesfully Deleted Producto"})
+        return res.status(201).json({status: 201, data: id, message: "Succesfully Deleted"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message})
     }
