@@ -65,7 +65,7 @@ exports.crearReceta = async function (req, res, next) {
 
 exports.editarReceta = async function (req, res, next) {
 
-    if (!req.body._id) {
+    if (!req.body.id) {
         console.log("status: 400., message: Id be present");
     }
 

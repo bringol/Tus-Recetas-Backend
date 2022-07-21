@@ -65,16 +65,26 @@ async function guardarReceta(newReceta) {
 }
 
 exports.editarReceta = async function (receta) {
+<<<<<<< HEAD
     var id = { _id: receta._id }
     console.log(id)
 
     try {
         var recetaAnterior = await Receta.findOne(id);
+=======
+    let id = { _id: receta._id }
+
+    try {
+        var recetaAnterior = await Receta.findOne(id);
+        console.log("el id", id)
+        //var recetaAnterior = await Receta.findOne({ _id: receta.id });
+        //similar o equivalente a find({name: receta.name})r
+>>>>>>> cd63c011ed0fcd1fad40d2a2b0fb815c0016771c
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
     if (!recetaAnterior)
-        return false;
+        throw Error('La receta no existe');
 
     if (receta.nombre !== null)
         recetaAnterior.nombre = receta.nombre
