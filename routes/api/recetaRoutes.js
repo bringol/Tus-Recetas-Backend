@@ -15,7 +15,5 @@ router.get('/auth/:id',protect, recetaController.obtenerRecetaID)
 router.post('/user/misrecetas/',protect, recetaController.obtenerRecetaMail)
 router.post('/calificar-receta/',protect, recetaController.calificarReceta)
 router.post('/uploadImg/', uploadController.uploadImg)
-router.get('/recetas/', recetaController.obtenerRecetasFiltros)
-
 
 module.exports = router
