@@ -6,8 +6,6 @@ var Schema = mongoose.Schema;
 //mongoose.Schema
 const recetaSchema = new Schema(
   {
-    
-    // _id: Schema.Types.ObjectId,
     nombre: String,
     categoria: String,
     dificultad: String,
@@ -23,7 +21,7 @@ const recetaSchema = new Schema(
   }, {versionKey: false}
 )
 
-//hace falta crear un index para poder realizar la busq
+//index para poder realizar la busq
 recetaSchema.index({name:"text"})
 
 recetaSchema.plugin(mongoosePaginate)

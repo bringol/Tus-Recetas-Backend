@@ -69,9 +69,7 @@ exports.editarReceta = async function (receta) {
 
     try {
         var recetaAnterior = await Receta.findOne(id);
-        console.log("el id", id)
-        //var recetaAnterior = await Receta.findOne({ _id: receta.id });
-        //similar o equivalente a find({name: receta.name})r
+        //console.log("el id", id)
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -115,41 +113,6 @@ exports.eliminarReceta = async function (id) {
         throw Error("Error Occured while Deleting the Receta")
     }
 }
-
-/*
-    POST /buscar
-    fuente: https://youtu.be/OEdPH4fV7vY?t=7711
-    busca solo por el nombre
-*/
-//Deprecated
-// exports.buscarReceta = async function (req, res, next) {
-//     try {
-//         //el campo que recibirá del query
-//         let termino = req.body.termino
-//         //el query
-//         let receta= await Receta.find( { $text: {$search: termino, $diacriticSensitive: true } } )
-//         return(receta)
-//     } catch (e) {
-//         return (e)
-//     }
-// }
-
-// exports.buscarRecetaFiltro = async function (req, res, next) {
-//     try {
-//         //el campo que recibirá del query
-//         //let nombre = req.body.name
-//         //let ingredientes = req.body.name
-//         //let categoria = req.body.categoria
-//         //let dificultad = req.body.dificultad
-
-//         //el query
-//         let receta= await Receta.find( {name: req.body.name } )
-//         return(receta)
-//     } catch (e) {
-//         return (e)
-//     }
-// }
-
 
 exports.crearCalificacion = async function (calificacion) {
 
@@ -208,18 +171,15 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 }
 
 
-// @desc POST /buscar
-// @route   POST /api/recetas
 exports.buscarReceta = async function (req) {
 
     try {
-console.log(req.body)
+//console.log(req.body)
         let receta = await Receta.find({
 
             nombre: { $regex: req.body.nombre, $options: 'i' },
             categoria: { $regex: req.body.categoria, $options: 'i' },
             dificultad: { $regex: req.body.dificultad, $options: 'i' },
-            //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
             calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
