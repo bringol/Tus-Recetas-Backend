@@ -54,7 +54,7 @@ exports.crearReceta = async function (receta) {
     });
 }
 
-async function guardarReceta(newReceta) { //guardo receta en Mongo
+async function guardarReceta(newReceta) { 
     try {
         var recetaGuardada = await newReceta.save();
         return recetaGuardada;
@@ -65,17 +65,11 @@ async function guardarReceta(newReceta) { //guardo receta en Mongo
 }
 
 exports.editarReceta = async function (receta) {
-
-<<<<<<< HEAD
     var id = { _id: receta._id }
     console.log(id)
-=======
-    var id = { _id: receta.id }
->>>>>>> dfefffc206aa666d66274b8098403fe3f65515c8
 
     try {
         var recetaAnterior = await Receta.findOne(id);
-        //similar o equivalente a find({name: receta.name})r
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -120,41 +114,6 @@ exports.eliminarReceta = async function (id) {
     }
 }
 
-/*
-    POST /buscar
-    fuente: https://youtu.be/OEdPH4fV7vY?t=7711
-    busca solo por el nombre
-*/
-//Deprecated
-// exports.buscarReceta = async function (req, res, next) {
-//     try {
-//         //el campo que recibirá del query
-//         let termino = req.body.termino
-//         //el query
-//         let receta= await Receta.find( { $text: {$search: termino, $diacriticSensitive: true } } )
-//         return(receta)
-//     } catch (e) {
-//         return (e)
-//     }
-// }
-
-// exports.buscarRecetaFiltro = async function (req, res, next) {
-//     try {
-//         //el campo que recibirá del query
-//         //let nombre = req.body.name
-//         //let ingredientes = req.body.name
-//         //let categoria = req.body.categoria
-//         //let dificultad = req.body.dificultad
-
-//         //el query
-//         let receta= await Receta.find( {name: req.body.name } )
-//         return(receta)
-//     } catch (e) {
-//         return (e)
-//     }
-// }
-
-
 exports.crearCalificacion = async function (calificacion) {
 
     console.log("entra al service")
@@ -168,7 +127,8 @@ exports.crearCalificacion = async function (calificacion) {
     console.log("new calificacion", newCalificacion)
     try {
 
-        await newCalificacion.save();
+        var calificacionGuardada = await newCalificacion.save();
+        return calificacionGuardada;
 
     } catch (e) {
         console.log(e)
@@ -188,7 +148,7 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 
         const suma = recetaAnterior.calificacionTotal + calificacion
         const cont = recetaAnterior.usuariosTotales + 1
-        
+
         recetaAnterior.calificacionTotal = suma
         recetaAnterior.usuariosTotales = cont
         recetaAnterior.calificacionPromedio = (suma / cont).toFixed(0)
@@ -211,52 +171,27 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
     }
 }
 
-
-// @desc POST /buscar
-// @route   POST /api/recetas
-exports.buscarReceta = async function (req) {
-
-    try {
-console.log(req.body)
-        let receta = await Receta.find({
-
-            nombre: { $regex: req.body.nombre, $options: 'i' },
-            categoria: { $regex: req.body.categoria, $options: 'i' },
-            dificultad: { $regex: req.body.dificultad, $options: 'i' },
-            //ingredientes:{$in: [req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes,req.body.ingredientes]}
-            ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
-            calificacion: { $regex: req.body.calificacion, $options: 'i' },
-        })
-        return (receta)
-    } catch (e) {
-        return (e)
-    }
-
-}
-
-exports.obtenerRecetasFiltros = async function (query, page, limit) {
+exports.buscarReceta = async function (query, req, page, limit) {
+  
     var options = {
         page,
         limit
     }
+
     try {
-        console.log("Query", query)
-        var Recetas = await Receta.find.paginate({query, options,
+        console.log(req.body)
+
+        let Recetas = await Receta.find({
             nombre: { $regex: req.body.nombre, $options: 'i' },
             categoria: { $regex: req.body.categoria, $options: 'i' },
             dificultad: { $regex: req.body.dificultad, $options: 'i' },
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
-            calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
+
+        //Recetas = await Receta.paginate(query, options)
         return Recetas;
     } catch (e) {
         console.log("error services", e)
-        throw Error('Error while Paginating Recetas');
+        throw Error('Error');
     }
 }
-
-
-
-
-
-

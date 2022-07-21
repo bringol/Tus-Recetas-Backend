@@ -2,12 +2,12 @@ const mongoose = require('mongoose')
 var mongoosePaginate = require('mongoose-paginate')
 
 var Schema = mongoose.Schema;
-
 //mongoose.Schema
+
 const recetaSchema = new Schema(
   {
     
-    _id: Schema.Types.ObjectId,
+    //_id: Schema.Types.ObjectId,
     nombre: String,
     categoria: String,
     dificultad: String,
@@ -18,12 +18,11 @@ const recetaSchema = new Schema(
     usuariosTotales: Number,
     date: Date,
     autor: String,
-    email: String, //para el listado de recetas publicadas
+    email: String, 
     nombreImagen: String, //URL Imagen
   }, {versionKey: false}
 )
 
-//hace falta crear un index para poder realizar la busq
 recetaSchema.index({name:"text"})
 
 recetaSchema.plugin(mongoosePaginate)
