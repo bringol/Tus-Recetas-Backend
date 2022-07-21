@@ -90,7 +90,42 @@ exports.eliminarReceta = async function (req, res, next) {
     var id = req.body.id;
     try {
         var deleted = await recetaService.eliminarReceta(id);
-        return res.status(201).json({ status: 201, data: id, message: "Succesfully Deleted" })
+        return res.status(201).json({status: 201, data: id, message: "Succesfully Deleted"})
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message})
+    }
+}
+
+
+
+exports.calificarReceta = async function (req, res, next) {
+
+    console.log("llega al controller del back")
+
+
+    var Calificacion = {
+        idReceta: req.body.idReceta ? req.body.idReceta : null ,
+        autor: req.body.autor ? req.body.autor : null ,
+        calificacion: req.body.calificacion ? req.body.calificacion : null 
+    }
+   
+    try {
+        console.log(Calificacion)
+        var crearCalificacion = await recetaService.crearCalificacion(Calificacion)
+        var actualizarPromedio = await recetaService.actualizarPromedio(Calificacion.idReceta, Calificacion.calificacion)
+        return res.status(200).json({status: 200, data: crearCalificacion, actualizarPromedio, message: "Succesfully Updated Receta"})
+    } catch (e) {
+        return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
+exports.buscarReceta = async function (req, res, next) {
+    console.log(req.body)
+    try {
+
+        let receta = await recetaService.buscarReceta(req, res)
+        return res.status(200).json({status: 200, data: receta, message: "Succesfully Recetas Recieved"});
+
     } catch (e) {
         return res.status(400).json({ status: 400, message: e.message })
     }
