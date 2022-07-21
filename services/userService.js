@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const nodemailer=require("nodemailer")
-//const crypto = require('crypto');
 
 
 // @desc    Registrar usr nuevo
@@ -21,7 +20,6 @@ exports.registerUser = asyncHandler(async (usr) => {
   const userExists = await User.findOne({ email })
 
   if (userExists) {
-    //res.status(400)
     throw new Error('Ya existe correo electrónico ')
   }
 
@@ -39,15 +37,6 @@ exports.registerUser = asyncHandler(async (usr) => {
   })
 
   if (user) {
-    //console.log("Bien")
-    // res.status(201).json({
-    //   _id: user.id,
-    // //   nombre: user.nombre,
-    // //   apellido: user.apellido,
-    // //   telefono: user.telefono,
-    // //   email: user.email,
-    //   token: generateToken(user._id),
-    // })
 
     var token= generateToken(user.id)
     return{token:token,user:user}
@@ -74,7 +63,6 @@ exports.loginUser = asyncHandler(async (userlogin) => {
 
 
   } else {
-    //res.status(400)
     throw new Error('Credenciales inválidas')
   }
 })
@@ -169,7 +157,6 @@ exports.editarPassword = async function (usuario) {
 // @route   PUT /api/users/olvido
 // @access  Public
 exports.olvidoPassword= async function (usuario) {
-  //source https://www.youtube.com/watch?v=NOuiitBbAcU
     var email=usuario.email
     console.log(usuario.email)
     try{
@@ -208,13 +195,9 @@ exports.olvidoPassword= async function (usuario) {
           //enviamos el mail
           transporter.sendMail(mailOptions,(error, info)=>{
             if(error){
-              //res.status(401).send(error.message)
               throw Error(error);
             }else{
               console.log("Email enviado exitosamente a: "+`${email}`)
-              //res.status(200).json("Email enviado exitosamente a: "+`${email}`)
-              //return("Email enviado exitosamente a: "+`${email}`)
-              //return(email)
             }
         
           })
@@ -229,7 +212,6 @@ exports.olvidoPassword= async function (usuario) {
 // @route   PUT /api/users/reinicio
 // @access  Private
 exports.reinicioPassword = async function (datos) {
-  //fuente https://www.youtube.com/watch?v=MfqyFcP6hTY&list=PLB97yPrFwo5g0FQr4rqImKa55F_aPiQWk&index=50&t=294s
     const newPassword = datos.password
     const sentToken = datos.token
     try{
@@ -244,8 +226,6 @@ exports.reinicioPassword = async function (datos) {
         usuario.resetToken = undefined
         usuario.expireToken = undefined
         usuario.save()
-        //res.status(200).json({message:"Contraseña modificada exitosamente"})
-        //return {message:"Contraseña modificada exitosamente"}
         
       })
     }
@@ -295,8 +275,6 @@ exports.envioMail = async function(email,token){
 /********************************************************* */
 exports.buscarUser = async function (req,res) {
     try {
-
-        //source https://stackoverflow.com/questions/43779319/mongodb-text-search-exact-match-using-variable
         let usuario= await User.find( {email: `${req.body.email}` } )
 
 
@@ -314,56 +292,6 @@ exports.buscarUser = async function (req,res) {
       //throw Error("Ocurrió un error en la busqueda email");
     }
 }
-
-
-
-// //-----------
-// // @desc    Update user
-// // @route   PUT /api/users/:id
-// // @route   PUT /api/users/update/
-// // @access  Private
-// exports.updateUser = asyncHandler(async (req, res) => {
-//   const { userid } = req.params;
-//   let password=req.body.password
-//   let newPassword=null
-
-//   const user= await User.findById(userid)
-//   console.log("en el servicio",user)
-//         //.then((user) => {
-//           if (user.password !== password) {
-//             const salt = bcrypt.genSaltSync(10);
-//             newPassword = bcrypt.hashSync(password, salt);
-    
-//             password = newPassword;
-//             console.log(newPassword);
-//           }
-//          // return password;
-// // I am returning the password to be able to pass it to the next then() and 
-// // use it as follows
-        
-//         //.then((password) => {
-//           const updatedUser= await User.findByIdAndUpdate(
-//             userid,
-//             {
-//               password,              
-//             },
-//             { new: true }
-//           )
-//             .then((response) => {
-//               console.log("response after update", response);
-//               res.status(200).json({ message: `User ${userid} has been updated` });
-//             })
-//             .catch((err) => {
-//               console.log(err);
-//               res
-//                 .status(500)
-//                 .json({ message: "Something went wrong updating the user" });
-//             });
-//         //});
-    
-
-// })
-
 
 
 

@@ -1,12 +1,9 @@
 var userService = require('../services/userService');
-//testing
-// const asyncHandler = require('express-async-handler')
-// const User = require('../models/userModel')
+
 
 
 exports.createUser = async function(req, res, next) {
-    // Req.Body contains the form submit values.
-    //console.log("llegue al controller", req.body)
+    //Req.body contiene los valores a enviar
     console.log("body", req.body)
     var User = {
         nombre: req.body.nombre,
@@ -17,18 +14,14 @@ exports.createUser = async function(req, res, next) {
     }
     
     try {
-        // Calling the Service function with the new object from the Request Body
         var createdUser = await userService.registerUser(User)
         return res.status(201).json({ createdUser, message: "Creacion exitosa de usuario" })
     } catch (e) {
-        //Return an Error Response Message with Code and the Error Message.
-        //console.log(e)
         return res.status(400).json({ status: 400, message: e.message })
     }
 }
 
 exports.loginUser = async function(req, res, next) {
-    // Req.Body contains the form submit values.
     console.log("body", req.body)
     var User = {
         email: req.body.email,
@@ -36,12 +29,9 @@ exports.loginUser = async function(req, res, next) {
     }
     
     try {
-        // Calling the Service function with the new object from the Request Body
-        //var loginUser = await userService.loginUser(req, res);
         var loginUser = await userService.loginUser(User);
         return res.status(201).json({ loginUser, message: "Login Exitoso" })
     } catch (e) {
-        //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({ status: 400, message: "Usuario o contraseña inválida" })
     }
 }
@@ -87,24 +77,6 @@ exports.editarPassword = async function (req, res, next) {
     }
 }
 
-exports.getUserByToken = async (req, res) => {
-    
-    try{
-    res.status(200).json(req.user.email)
-    }
-    catch(e){
-        return res.status(400).json({status: 400., message: "e.message"})
-    }
-
-  }
-
-exports.getUserByEmail = async (req, res) => {
-    const {email}=await User.findById(req.user.email)
-    res.status(200).json(req.user.email)
-  }
-
-
-//**///// */
 exports.olvidoPassword = async function (req, res, next) {
 
     if (!req.body.email) {

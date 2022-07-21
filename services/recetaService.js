@@ -54,7 +54,7 @@ exports.crearReceta = async function (receta) {
     });
 }
 
-async function guardarReceta(newReceta) { 
+async function guardarReceta(newReceta) { //guardo receta en Mongo
     try {
         var recetaGuardada = await newReceta.save();
         return recetaGuardada;
@@ -65,21 +65,11 @@ async function guardarReceta(newReceta) {
 }
 
 exports.editarReceta = async function (receta) {
-<<<<<<< HEAD
-    var id = { _id: receta._id }
-    console.log(id)
-
-    try {
-        var recetaAnterior = await Receta.findOne(id);
-=======
     let id = { _id: receta._id }
 
     try {
         var recetaAnterior = await Receta.findOne(id);
-        console.log("el id", id)
-        //var recetaAnterior = await Receta.findOne({ _id: receta.id });
-        //similar o equivalente a find({name: receta.name})r
->>>>>>> cd63c011ed0fcd1fad40d2a2b0fb815c0016771c
+        //console.log("el id", id)
     } catch (e) {
         throw Error("Error occured while Finding the Receta")
     }
@@ -137,8 +127,7 @@ exports.crearCalificacion = async function (calificacion) {
     console.log("new calificacion", newCalificacion)
     try {
 
-        var calificacionGuardada = await newCalificacion.save();
-        return calificacionGuardada;
+        await newCalificacion.save();
 
     } catch (e) {
         console.log(e)
@@ -158,7 +147,7 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
 
         const suma = recetaAnterior.calificacionTotal + calificacion
         const cont = recetaAnterior.usuariosTotales + 1
-
+        
         recetaAnterior.calificacionTotal = suma
         recetaAnterior.usuariosTotales = cont
         recetaAnterior.calificacionPromedio = (suma / cont).toFixed(0)
@@ -181,27 +170,49 @@ exports.actualizarPromedio = async function (idReceta, calificacion) {
     }
 }
 
-exports.buscarReceta = async function (query, req, page, limit) {
-  
-    var options = {
-        page,
-        limit
-    }
+
+exports.buscarReceta = async function (req) {
 
     try {
-        console.log(req.body)
+//console.log(req.body)
+        let receta = await Receta.find({
 
-        let Recetas = await Receta.find({
             nombre: { $regex: req.body.nombre, $options: 'i' },
             categoria: { $regex: req.body.categoria, $options: 'i' },
             dificultad: { $regex: req.body.dificultad, $options: 'i' },
             ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
+            calificacion: { $regex: req.body.calificacion, $options: 'i' },
         })
+        return (receta)
+    } catch (e) {
+        return (e)
+    }
 
-        //Recetas = await Receta.paginate(query, options)
+}
+
+exports.obtenerRecetasFiltros = async function (query, page, limit) {
+    var options = {
+        page,
+        limit
+    }
+    try {
+        console.log("Query", query)
+        var Recetas = await Receta.find.paginate({query, options,
+            nombre: { $regex: req.body.nombre, $options: 'i' },
+            categoria: { $regex: req.body.categoria, $options: 'i' },
+            dificultad: { $regex: req.body.dificultad, $options: 'i' },
+            ingredientes: { $regex: req.body.ingredientes, $options: 'i' },
+            calificacion: { $regex: req.body.calificacion, $options: 'i' },
+        })
         return Recetas;
     } catch (e) {
         console.log("error services", e)
-        throw Error('Error');
+        throw Error('Error while Paginating Recetas');
     }
 }
+
+
+
+
+
+

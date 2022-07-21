@@ -7,11 +7,11 @@ exports.obtenerRecetas = async function (req, res, next) {
     var page = req.query.page ? req.query.page : 1;
     var limit = req.query.limit ? req.query.limit : 8;
 
-    try {
+        try {
         var Recetas = await recetaService.obtenerRecetas({}, page, limit)
-        return res.status(200).json({ status: 200, data: Recetas, message: "Succesfully Recetas Recieved" });
+        return res.status(200).json({status: 200, data: Recetas, message: "Succesfully Recetas Recieved"});
     } catch (e) {
-        return res.status(400).json({ status: 400, message: e.message });
+        return res.status(400).json({status: 400, message: e.message});
     }
 }
 
@@ -19,12 +19,12 @@ exports.obtenerRecetaID = async function (req, res, next) {
 
     var page = req.query.page ? req.query.page : 1
     var limit = req.query.limit ? req.query.limit : 8;
-    let filtro = { _id: req.params.id }
+    let filtro= {_id: req.params.id}
     try {
         var Producto = await recetaService.obtenerRecetas(filtro, page, limit)
-        return res.status(200).json({ status: 200, data: Producto, message: "Succesfully Recieved Receta" });
+        return res.status(200).json({status: 200, data: Producto, message: "Succesfully Recieved Receta"});
     } catch (e) {
-        return res.status(400).json({ status: 400, message: e.message });
+        return res.status(400).json({status: 400, message: e.message});
     }
 }
 
@@ -32,18 +32,18 @@ exports.obtenerRecetaMail = async function (req, res, next) {
 
     var page = req.query.page ? req.query.page : 1
     var limit = req.query.limit ? req.query.limit : 8;
-    let filtro = { email: req.body.email }
+    let filtro= {email: req.body.email}
     try {
         var Producto = await recetaService.obtenerRecetas(filtro, page, limit)
-        return res.status(200).json({ status: 200, data: Producto, message: "Succesfully Recieved Receta" });
+        return res.status(200).json({status: 200, data: Producto, message: "Succesfully Recieved Receta"});
     } catch (e) {
-        return res.status(400).json({ status: 400, message: e.message });
+        return res.status(400).json({status: 400, message: e.message});
     }
 }
 
 exports.crearReceta = async function (req, res, next) {
 
-    console.log("llegue al controller", req.body)
+    console.log("llegue al controller",req.body)
     var Receta = {
         nombre: req.body.nombre,
         categoria: req.body.categoria,
@@ -55,11 +55,11 @@ exports.crearReceta = async function (req, res, next) {
         nombreImagen: req.body.nombreImagen
     }
     try {
-        var recetaCreada = await recetaService.crearReceta(Receta)
-        return res.status(201).json({ recetaCreada, message: "Succesfully Created Receta" })
+            var recetaCreada = await recetaService.crearReceta(Receta)
+        return res.status(201).json({recetaCreada, message: "Succesfully Created Receta"})
     } catch (e) {
         console.log(e)
-        return res.status(400).json({ status: 400, message: "Receta Creation was Unsuccesfull" })
+        return res.status(400).json({status: 400, message: "Receta Creation was Unsuccesfull"})
     }
 }
 
@@ -80,9 +80,9 @@ exports.editarReceta = async function (req, res, next) {
     console.log("receta")
     try {
         var recetaActualizada = await recetaService.editarReceta(Receta)
-        return res.status(200).json({ status: 200, data: recetaActualizada, message: "Succesfully Updated Receta" })
+        return res.status(200).json({status: 200, data: recetaActualizada, message: "Succesfully Updated Receta"})
     } catch (e) {
-        return res.status(400).json({ status: 400., message: e.message })
+        return res.status(400).json({status: 400., message: e.message})
     }
 }
 
@@ -90,45 +90,61 @@ exports.eliminarReceta = async function (req, res, next) {
     var id = req.body.id;
     try {
         var deleted = await recetaService.eliminarReceta(id);
-        return res.status(201).json({ status: 201, data: id, message: "Succesfully Deleted" })
+        return res.status(201).json({status: 201, data: id, message: "Succesfully Deleted"})
     } catch (e) {
-        return res.status(400).json({ status: 400, message: e.message })
+        return res.status(400).json({status: 400, message: e.message})
     }
 }
+
+
 
 exports.calificarReceta = async function (req, res, next) {
 
     console.log("llega al controller del back")
 
+
     var Calificacion = {
-        idReceta: req.body.idReceta ? req.body.idReceta : null,
-        autor: req.body.autor ? req.body.autor : null,
+        idReceta: req.body.idReceta ? req.body.idReceta : null ,
+        autor: req.body.autor ? req.body.autor : null ,
         calificacion: req.body.calificacion ? req.body.calificacion : null 
     }
-
+   
     try {
         console.log(Calificacion)
         var crearCalificacion = await recetaService.crearCalificacion(Calificacion)
         var actualizarPromedio = await recetaService.actualizarPromedio(Calificacion.idReceta, Calificacion.calificacion)
-        return res.status(200).json({ status: 200, data: crearCalificacion, actualizarPromedio, message: "Succesfully Updated Receta" })
+        return res.status(200).json({status: 200, data: crearCalificacion, actualizarPromedio, message: "Succesfully Updated Receta"})
     } catch (e) {
-        return res.status(400).json({ status: 400., message: e.message })
+        return res.status(400).json({status: 400., message: e.message})
     }
 }
 
 exports.buscarReceta = async function (req, res, next) {
+    console.log(req.body)
+    try {
 
+        let receta = await recetaService.buscarReceta(req, res)
+        return res.status(200).json({status: 200, data: receta, message: "Succesfully Recetas Recieved"});
+
+    } catch (e) {
+        return res.status(400).json({ status: 400, message: e.message })
+    }
+}
+
+
+exports.obtenerRecetasFiltros = async function (req, res, next) {
 
     var page = req.query.page ? req.query.page : 1;
     var limit = req.query.limit ? req.query.limit : 8;
 
-    console.log(req.body)
     try {
+        
+       var receta= await recetaService.buscarRecetas({}, page, limit)
 
-        let receta = await recetaService.buscarReceta({}, req, page, limit)
-        return res.status(200).json({ status: 200, data: receta, message: "Succesfully Recetas Recieved" });
+        return res.status(201).json(receta)
 
+        
     } catch (e) {
-        return res.status(400).json({ status: 400, message: e.message })
+        return res.status(400).json({status: 400, message: e.message})
     }
 }
