@@ -7,7 +7,7 @@ var Schema = mongoose.Schema;
 const recetaSchema = new Schema(
   {
     
-    _id: Schema.Types.ObjectId,
+    // _id: Schema.Types.ObjectId,
     nombre: String,
     categoria: String,
     dificultad: String,
