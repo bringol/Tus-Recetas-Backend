@@ -96,8 +96,6 @@ exports.eliminarReceta = async function (req, res, next) {
     }
 }
 
-
-
 exports.calificarReceta = async function (req, res, next) {
 
     console.log("llega al controller del back")
@@ -128,23 +126,5 @@ exports.buscarReceta = async function (req, res, next) {
 
     } catch (e) {
         return res.status(400).json({ status: 400, message: e.message })
-    }
-}
-
-
-exports.obtenerRecetasFiltros = async function (req, res, next) {
-
-    var page = req.query.page ? req.query.page : 1;
-    var limit = req.query.limit ? req.query.limit : 8;
-
-    try {
-        
-       var receta= await recetaService.buscarRecetas({}, page, limit)
-
-        return res.status(201).json(receta)
-
-        
-    } catch (e) {
-        return res.status(400).json({status: 400, message: e.message})
     }
 }
